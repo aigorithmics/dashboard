@@ -35,6 +35,7 @@ import (
 	profilev1 "github.com/kubeflow/dashboard/components/profile-controller/api/v1"
 	kubefloworgv1beta1 "github.com/kubeflow/dashboard/components/profile-controller/api/v1beta1"
 	"github.com/kubeflow/dashboard/components/profile-controller/controllers"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -86,7 +87,7 @@ func main() {
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
-		MetricsBindAddress:     metricsAddr,
+		Metrics:                metricsserver.Options{BindAddress: metricsAddr},
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "kubeflow-profile-controller",

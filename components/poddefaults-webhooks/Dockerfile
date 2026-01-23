@@ -1,5 +1,5 @@
 # Build the manager binary
-ARG GOLANG_VERSION=1.21
+ARG GOLANG_VERSION=1.25.6
 FROM golang:${GOLANG_VERSION} as builder
 
 # Copy in the go src
@@ -11,7 +11,7 @@ ENV GO111MODULE=on
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux go build -o webhook -a . ;
-    
+
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static:nonroot

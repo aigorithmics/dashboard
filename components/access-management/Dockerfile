@@ -1,4 +1,4 @@
-ARG GOLANG_VERSION=1.17
+ARG GOLANG_VERSION=1.25.6
 FROM golang:${GOLANG_VERSION} AS builder
 
 WORKDIR /workspace
@@ -6,9 +6,9 @@ WORKDIR /workspace
 COPY . .
 
 RUN if [ "$(uname -m)" = "aarch64" ]; then \
-        go mod download; \
+    go mod download; \
     elif [ "$(uname -m)" = "ppc64le" ]; then \
-        git config --global http.sslVerify false &&  go mod download; \
+    git config --global http.sslVerify false &&  go mod download; \
     fi
 
 RUN CGO_ENABLED=0 GOOS=linux go build -gcflags 'all=-N -l' -o access-management main.go
@@ -22,7 +22,6 @@ FROM gcr.io/distroless/static:nonroot AS serve
 WORKDIR /
 COPY third_party third_party
 COPY --from=builder /workspace/access-management .
-COPY --from=builder /go/pkg/mod/github.com/hashicorp third_party/library/
 
 USER 65532:65532
 

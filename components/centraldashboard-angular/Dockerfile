@@ -1,5 +1,5 @@
 # --- Build the backend ---
-FROM node:16.20.2-bullseye as backend
+FROM node:16.20.2-bullseye AS backend
 
 COPY ./backend/ ./src
 WORKDIR /src
@@ -9,11 +9,11 @@ RUN npm ci && \
     npm prune --production
 
 # --- Build the frontend kubeflow library ---
-FROM node:16.20.2-bullseye as frontend-kubeflow-lib
+FROM node:16.20.2-bullseye AS frontend-kubeflow-lib
 
 WORKDIR /src
 
-ENV NG_CLI_ANALYTICS "ci"
+ENV NG_CLI_ANALYTICS="ci"
 COPY ./kubeflow-common-lib/package.json ./
 COPY ./kubeflow-common-lib/package-lock.json ./
 RUN npm ci
@@ -24,7 +24,7 @@ COPY ./kubeflow-common-lib/tsconfig.json .
 RUN npm run build
 
 # --- Build the frontend ---
-FROM node:16.20.2-bullseye as frontend
+FROM node:16.20.2-bullseye AS frontend
 
 ARG kubeflowversion=unknown
 ENV BUILD_VERSION=$kubeflowversion
@@ -32,7 +32,7 @@ ENV BUILD_VERSION=$kubeflowversion
 COPY ./frontend /src
 WORKDIR /src
 
-ENV NG_CLI_ANALYTICS "ci"
+ENV NG_CLI_ANALYTICS="ci"
 RUN node scripts/replace-string-in-file.js src/environments/environment.prod.ts 'BUILD_VERSION' $BUILD_VERSION
 RUN npm ci
 COPY --from=frontend-kubeflow-lib /src/dist/kubeflow/ ./node_modules/kubeflow/
