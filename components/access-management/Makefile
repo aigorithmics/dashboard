@@ -5,7 +5,7 @@ GO_SWAGGER_URL ?= https://github.com/go-swagger/go-swagger/releases/download/v0.
 GIT_VERSION := $(shell git describe --tags --always --dirty)
 
 IMG ?= registry.aigoml.aigodev.com/kubeflow/dashboard/access-management
-TAG ?= v1.10.0-1.0.2
+TAG ?= v1.10.0-1.0.3
 ARCH ?= linux/amd64
 generate-go-client: bin/swagger
 	bin/swagger generate client -f api/swagger.yaml -t api/go_client

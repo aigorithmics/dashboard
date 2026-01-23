@@ -15,6 +15,7 @@
 package kfam
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -46,9 +47,9 @@ var roleBindingNameMap = map[string]string{
 }
 
 type BindingInterface interface {
-	Create(binding *Binding, userIdHeader string, userIdPrefix string) error
-	Delete(binding *Binding) error
-	List(user string, namespaces []string, role string) (*BindingEntries, error)
+	Create(ctx context.Context, binding *Binding, userIdHeader string, userIdPrefix string) error
+	Delete(ctx context.Context, binding *Binding) error
+	List(ctx context.Context, user string, namespaces []string, role string) (*BindingEntries, error)
 }
 
 type BindingClient struct {
@@ -109,7 +110,7 @@ func getAuthorizationPolicy(binding *Binding, userIdHeader string, userIdPrefix 
 	}
 }
 
-func (c *BindingClient) Create(binding *Binding, userIdHeader string, userIdPrefix string) error {
+func (c *BindingClient) Create(ctx context.Context, binding *Binding, userIdHeader string, userIdPrefix string) error {
 	// TODO: permission check before go ahead
 	bindingName, err := getBindingName(binding)
 	if err != nil {
@@ -129,7 +130,7 @@ func (c *BindingClient) Create(binding *Binding, userIdHeader string, userIdPref
 			*binding.User,
 		},
 	}
-	_, err = c.kubeClient.RbacV1().RoleBindings(binding.ReferredNamespace).Create(&roleBinding)
+	_, err = c.kubeClient.RbacV1().RoleBindings(binding.ReferredNamespace).Create(ctx, &roleBinding, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
@@ -150,11 +151,11 @@ func (c *BindingClient) Create(binding *Binding, userIdHeader string, userIdPref
 		Namespace(binding.ReferredNamespace).
 		Resource(AuthorizationPolicy).
 		Body(istioAuth).
-		Do().
+		Do(ctx).
 		Into(&result)
 }
 
-func (c *BindingClient) Delete(binding *Binding) error {
+func (c *BindingClient) Delete(ctx context.Context, binding *Binding) error {
 	// TODO: permission check before go ahead
 	// First check existence
 	bindingName, err := getBindingName(binding)
@@ -172,13 +173,13 @@ func (c *BindingClient) Delete(binding *Binding) error {
 		Resource(AuthorizationPolicy).
 		Name(bindingName).
 		VersionedParams(&metav1.GetOptions{}, scheme.ParameterCodec).
-		Do().
+		Do(ctx).
 		Into(&result)
 	if err != nil {
 		return err
 	}
 	// Delete if exists
-	err = c.kubeClient.RbacV1().RoleBindings(binding.ReferredNamespace).Delete(bindingName, &metav1.DeleteOptions{})
+	err = c.kubeClient.RbacV1().RoleBindings(binding.ReferredNamespace).Delete(ctx, bindingName, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}
@@ -188,11 +189,11 @@ func (c *BindingClient) Delete(binding *Binding) error {
 		Resource(AuthorizationPolicy).
 		Name(bindingName).
 		Body(&metav1.DeleteOptions{}).
-		Do().
+		Do(ctx).
 		Error()
 }
 
-func (c *BindingClient) List(user string, namespaces []string, role string) (*BindingEntries, error) {
+func (c *BindingClient) List(ctx context.Context, user string, namespaces []string, role string) (*BindingEntries, error) {
 	bindings := []Binding{}
 	for _, ns := range namespaces {
 		roleBindings, err := c.roleBindingLister.RoleBindings(ns).List(labels.Everything())

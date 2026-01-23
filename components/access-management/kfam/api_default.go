@@ -11,6 +11,7 @@
 package kfam
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -25,7 +26,6 @@ import (
 	istioRegister "istio.io/client-go/pkg/apis/security/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/informers"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -114,7 +114,7 @@ func getRESTClient(group string, version string) (*rest.RESTClient, error) {
 	}
 	restconfig.ContentConfig.GroupVersion = &schema.GroupVersion{Group: group, Version: version}
 	restconfig.APIPath = "/apis"
-	restconfig.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
+	restconfig.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
 	restconfig.UserAgent = rest.DefaultKubernetesUserAgent()
 	return rest.RESTClientFor(restconfig)
 }
@@ -132,8 +132,8 @@ func (c *KfamV1Alpha1Client) CreateBinding(w http.ResponseWriter, r *http.Reques
 	}
 	// check permission before create binding
 	useremail := c.getUserEmail(r.Header)
-	if c.isOwnerOrAdmin(useremail, binding.ReferredNamespace) {
-		err := c.bindingClient.Create(&binding, c.userIdHeader, c.userIdPrefix)
+	if c.isOwnerOrAdmin(r.Context(), useremail, binding.ReferredNamespace) {
+		err := c.bindingClient.Create(r.Context(), &binding, c.userIdHeader, c.userIdPrefix)
 		if err != nil {
 			IncRequestErrorCounter(err.Error(), useremail, action, r.URL.Path,
 				SEVERITY_MAJOR)
@@ -160,7 +160,7 @@ func (c *KfamV1Alpha1Client) CreateProfile(w http.ResponseWriter, r *http.Reques
 		writeResponse(w, []byte(err.Error()))
 		return
 	}
-	_, err := c.profileClient.Create(&profile)
+	_, err := c.profileClient.Create(r.Context(), &profile)
 	if err != nil {
 		IncRequestErrorCounter(err.Error(), "", action, r.URL.Path,
 			SEVERITY_MAJOR)
@@ -185,8 +185,8 @@ func (c *KfamV1Alpha1Client) DeleteBinding(w http.ResponseWriter, r *http.Reques
 	}
 	// check permission before delete
 	useremail := c.getUserEmail(r.Header)
-	if c.isOwnerOrAdmin(useremail, binding.ReferredNamespace) {
-		err := c.bindingClient.Delete(&binding)
+	if c.isOwnerOrAdmin(r.Context(), useremail, binding.ReferredNamespace) {
+		err := c.bindingClient.Delete(r.Context(), &binding)
 		if err != nil {
 			IncRequestErrorCounter(err.Error(), useremail, action, r.URL.Path,
 				SEVERITY_MAJOR)
@@ -208,8 +208,8 @@ func (c *KfamV1Alpha1Client) DeleteProfile(w http.ResponseWriter, r *http.Reques
 	useremail := c.getUserEmail(r.Header)
 	profileName := path.Base(r.RequestURI)
 	// check permission before delete
-	if c.isOwnerOrAdmin(useremail, profileName) {
-		err := c.profileClient.Delete(profileName, nil)
+	if c.isOwnerOrAdmin(r.Context(), useremail, profileName) {
+		err := c.profileClient.Delete(r.Context(), profileName, nil)
 		if err != nil {
 			IncRequestErrorCounter(err.Error(), useremail, action, r.URL.Path,
 				SEVERITY_MAJOR)
@@ -239,7 +239,7 @@ func (c *KfamV1Alpha1Client) ReadBinding(w http.ResponseWriter, r *http.Request)
 	namespaces := []string{}
 	// by default scan all namespaces created by profile CR
 	if queries.Get("namespace") == "" {
-		profList, err := c.profileClient.List(metav1.ListOptions{})
+		profList, err := c.profileClient.List(r.Context(), metav1.ListOptions{})
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
 			writeResponse(w, []byte(err.Error()))
@@ -250,7 +250,7 @@ func (c *KfamV1Alpha1Client) ReadBinding(w http.ResponseWriter, r *http.Request)
 	} else {
 		namespaces = append(namespaces, queries.Get("namespace"))
 	}
-	bindingList, err := c.bindingClient.List(queries.Get("user"), namespaces, queries.Get("role"))
+	bindingList, err := c.bindingClient.List(r.Context(), queries.Get("user"), namespaces, queries.Get("role"))
 	if err != nil {
 		IncRequestErrorCounter(err.Error(), "", action, r.URL.Path,
 			SEVERITY_MAJOR)
@@ -322,9 +322,9 @@ func (c *KfamV1Alpha1Client) isClusterAdmin(queryUser string) bool {
 }
 
 // isOwnerOrAdmin return true if queryUser is cluster admin or profile owner
-func (c *KfamV1Alpha1Client) isOwnerOrAdmin(queryUser string, profileName string) bool {
+func (c *KfamV1Alpha1Client) isOwnerOrAdmin(ctx context.Context, queryUser string, profileName string) bool {
 	isAdmin := c.isClusterAdmin(queryUser)
-	prof, err := c.profileClient.Get(profileName, metav1.GetOptions{})
+	prof, err := c.profileClient.Get(ctx, profileName, metav1.GetOptions{})
 	if err != nil {
 		return false
 	}

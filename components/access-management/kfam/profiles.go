@@ -15,6 +15,8 @@
 package kfam
 
 import (
+	"context"
+
 	"github.com/kubeflow/dashboard/components/profile-controller/api/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -22,11 +24,11 @@ import (
 )
 
 type ProfileInterface interface {
-	Create(profile *v1beta1.Profile) (*v1beta1.Profile, error)
-	Delete(name string, opts *metav1.DeleteOptions) error
-	Get(name string, opts metav1.GetOptions) (*v1beta1.Profile, error)
-	List(opts metav1.ListOptions) (*v1beta1.ProfileList, error)
-	Update(profile *v1beta1.Profile) (*v1beta1.Profile, error)
+	Create(ctx context.Context, profile *v1beta1.Profile) (*v1beta1.Profile, error)
+	Delete(ctx context.Context, name string, opts *metav1.DeleteOptions) error
+	Get(ctx context.Context, name string, opts metav1.GetOptions) (*v1beta1.Profile, error)
+	List(ctx context.Context, opts metav1.ListOptions) (*v1beta1.ProfileList, error)
+	Update(ctx context.Context, profile *v1beta1.Profile) (*v1beta1.Profile, error)
 }
 
 type ProfileClient struct {
@@ -35,60 +37,60 @@ type ProfileClient struct {
 
 const Profiles = "profiles"
 
-func (c *ProfileClient) Create(profile *v1beta1.Profile) (*v1beta1.Profile, error) {
+func (c *ProfileClient) Create(ctx context.Context, profile *v1beta1.Profile) (*v1beta1.Profile, error) {
 	result := v1beta1.Profile{}
 	err := c.restClient.
 		Post().
 		Resource(Profiles).
 		Body(profile).
-		Do().
+		Do(ctx).
 		Into(&result)
 
 	return &result, err
 }
 
-func (c *ProfileClient) Delete(name string, opts *metav1.DeleteOptions) error {
+func (c *ProfileClient) Delete(ctx context.Context, name string, opts *metav1.DeleteOptions) error {
 	return c.restClient.
 		Delete().
 		Resource(Profiles).
 		Name(name).
 		Body(opts).
-		Do().
+		Do(ctx).
 		Error()
 }
 
-func (c *ProfileClient) Get(name string, opts metav1.GetOptions) (*v1beta1.Profile, error) {
+func (c *ProfileClient) Get(ctx context.Context, name string, opts metav1.GetOptions) (*v1beta1.Profile, error) {
 	result := v1beta1.Profile{}
 	err := c.restClient.
 		Get().
 		Resource(Profiles).
 		Name(name).
 		VersionedParams(&opts, scheme.ParameterCodec).
-		Do().
+		Do(ctx).
 		Into(&result)
 
 	return &result, err
 }
 
-func (c *ProfileClient) List(opts metav1.ListOptions) (*v1beta1.ProfileList, error) {
+func (c *ProfileClient) List(ctx context.Context, opts metav1.ListOptions) (*v1beta1.ProfileList, error) {
 	result := v1beta1.ProfileList{}
 	err := c.restClient.
 		Get().
 		Resource(Profiles).
 		VersionedParams(&opts, scheme.ParameterCodec).
-		Do().
+		Do(ctx).
 		Into(&result)
 
 	return &result, err
 }
 
-func (c *ProfileClient) Update(profile *v1beta1.Profile) (*v1beta1.Profile, error) {
+func (c *ProfileClient) Update(ctx context.Context, profile *v1beta1.Profile) (*v1beta1.Profile, error) {
 	result := v1beta1.Profile{}
 	err := c.restClient.
 		Put().
 		Resource(Profiles).
 		Body(profile).
-		Do().
+		Do(ctx).
 		Into(&result)
 
 	return &result, err
