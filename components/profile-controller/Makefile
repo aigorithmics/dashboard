@@ -1,6 +1,6 @@
 # Image URL to use all building/pushing image targets
 IMG ?= registry.aigoml.aigodev.com/kubeflow/dashboard/profile-controller
-TAG ?= v1.10.0-1.0.1
+TAG ?= v1.10.0-1.0.2
 ARCH ?= linux/amd64
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.

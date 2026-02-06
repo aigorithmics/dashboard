@@ -1,6 +1,6 @@
 # Build the manager binary
-ARG GOLANG_VERSION=1.25.6
-FROM golang:${GOLANG_VERSION} as builder
+ARG GOLANG_VERSION=1.25.7
+FROM golang:${GOLANG_VERSION} AS builder
 
 # Copy in the go src
 WORKDIR /go/src/github.com/kubeflow/dashboard/components/poddefaults-webhooks
