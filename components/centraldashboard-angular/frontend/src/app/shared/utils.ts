@@ -81,6 +81,6 @@ export function getQueryParams(locationSearch: string | undefined): {
 }
 
 export function getUrlFragment(url: string): string {
-  const fragment = url.split('#')[1];
+  const fragment = url?.split('#')[1];
   return fragment;
 }

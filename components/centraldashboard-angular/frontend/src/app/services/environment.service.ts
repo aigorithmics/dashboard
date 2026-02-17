@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import { DashboardLinks } from '../types/dashboard-links';
 import { EnvInfo } from '../types/env-info';
@@ -15,7 +15,7 @@ export class EnvironmentService {
   public namespaces = new ReplaySubject<Namespace[]>(1);
   public dashboardLinks = new ReplaySubject<DashboardLinks>(1);
 
-  constructor(private backend: CDBBackendService) {
+  constructor(@Inject(CDBBackendService) private backend: CDBBackendService) {
     this.backend.getEnvInfo().subscribe((res: EnvInfo) => {
       if (res.user) {
         this.user.next(res.user);

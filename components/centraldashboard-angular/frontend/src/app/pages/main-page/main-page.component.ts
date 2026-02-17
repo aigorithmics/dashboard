@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -45,8 +45,8 @@ export class MainPageComponent implements OnInit {
   public isIframed = false;
 
   constructor(
-    private breakpointObserver: BreakpointObserver,
-    private router: Router,
+    @Inject(BreakpointObserver) private breakpointObserver: BreakpointObserver,
+    @Inject(Router) private router: Router,
     private env: EnvironmentService,
     private ns: CDBNamespaceService,
   ) {}
@@ -100,7 +100,8 @@ export class MainPageComponent implements OnInit {
 
   getUrlPath(url: string, ns: string) {
     // Remove fragment from URL
-    url = url.split('#')[0];
+    if (!url) return;
+    url = url?.split('#')[0];
     url = this.appendPrefix(url);
 
     if (!ns) {

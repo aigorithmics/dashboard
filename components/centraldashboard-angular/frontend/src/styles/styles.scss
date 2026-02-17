@@ -8,10 +8,10 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-@import '../../node_modules/kubeflow/styles/fonts.scss';
+// @import '../../node_modules/kubeflow/styles/fonts.scss';
 
 // Use the material icons offline
-@import '~material-icons/iconfont/material-icons.scss';
+@import 'material-icons/iconfont/material-icons.scss';
 
 .cdb-snackbar {
   .snack-container {

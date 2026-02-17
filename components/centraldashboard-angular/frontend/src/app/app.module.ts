@@ -8,8 +8,8 @@ import { MainPageModule } from './pages/main-page/main-page.module';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { IframeWrapperComponent } from './pages/iframe-wrapper/iframe-wrapper.component';
 import { SafePipe } from './pipes/safe.pipe';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { SnackBarModule } from 'kubeflow';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+// import { SnackBarModule } from 'kubeflow';
 import {
   MatSnackBarConfig,
   MAT_SNACK_BAR_DEFAULT_OPTIONS,
@@ -44,8 +44,7 @@ const CdbSnackBarConfig: MatSnackBarConfig = {
     AppRoutingModule,
     BrowserAnimationsModule,
     MainPageModule,
-    HttpClientModule,
-    SnackBarModule,
+    //SnackBarModule,
   ],
   providers: [
     {
@@ -56,6 +55,7 @@ const CdbSnackBarConfig: MatSnackBarConfig = {
     },
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: CdbSnackBarConfig },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    provideHttpClient()
   ],
   bootstrap: [AppComponent],
 })

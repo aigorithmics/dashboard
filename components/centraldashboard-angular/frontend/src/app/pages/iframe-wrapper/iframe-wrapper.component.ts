@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Inject,
   OnDestroy,
   ViewChild,
 } from '@angular/core';
@@ -70,7 +71,7 @@ export class IframeWrapperComponent implements AfterViewInit, OnDestroy {
   private urlSub: Subscription;
   private interval: any;
 
-  constructor(private router: Router, private ns: CDBNamespaceService) {
+  constructor(@Inject(Router) private router: Router, private ns: CDBNamespaceService) {
     /**
      * On router events, we want to ensure that:
      *  - the iframe's src won't be updated when the URLs of the
