@@ -1,6 +1,6 @@
 # Image URL to use all building/pushing image targets
 IMG ?= registry.aigoml.aigodev.com/kubeflow/dashboard/poddefaults-webhook
-TAG ?= v1.10.0-1.0.1
+TAG ?= v1.10.0-1.0.2
 ARCH ?= linux/amd64
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))

@@ -1,6 +1,6 @@
 module github.com/kubeflow/dashboard/components/access-management
 
-go 1.25.6
+go 1.26.0
 
 require (
 	github.com/gorilla/mux v1.7.2
