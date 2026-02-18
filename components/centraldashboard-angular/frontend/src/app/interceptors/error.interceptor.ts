@@ -8,11 +8,13 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { SnackBarConfig, SnackBarService, SnackType } from 'kubeflow';
+// import { SnackBarConfig, SnackBarService, SnackType } from 'kubeflow';
+//todo - to fix after kubernetes client library is upgraded
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private snackBar: SnackBarService) {}
+  ///constructor(private snackBar: SnackBarService) {}
+  constructor() {}
 
   intercept(
     request: HttpRequest<unknown>,
@@ -30,15 +32,15 @@ export class ErrorInterceptor implements HttpInterceptor {
     // The backend returned an unsuccessful response code.
     // The response body may contain clues as to what went wrong,
     console.error(error);
-    if (showSnackBar) {
-      const config: SnackBarConfig = {
-        data: {
-          msg: this.getSnackErrorMessage(error),
-          snackType: SnackType.Error,
-        },
-      };
-      this.snackBar.open(config);
-    }
+    // if (showSnackBar) {
+    //   const config: SnackBarConfig = {
+    //     data: {
+    //       msg: this.getSnackErrorMessage(error),
+    //       snackType: SnackType.Error,
+    //     },
+    //   };
+    //   this.snackBar.open(config);
+    // }
 
     return throwError(this.getErrorMessage(error));
   }

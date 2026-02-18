@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,5 +11,5 @@ export class NotFoundPageComponent {
     return decodeURIComponent(this.router.url);
   }
 
-  constructor(private router: Router) {}
+  constructor(@Inject(Router) private router: Router) {}
 }

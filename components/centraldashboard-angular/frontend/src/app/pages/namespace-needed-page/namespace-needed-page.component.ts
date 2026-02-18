@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 export class NamespaceNeededPageComponent implements OnInit, OnDestroy {
   private sub: Subscription;
 
-  constructor(private route: ActivatedRoute, private location: Location) {}
+  constructor(@Inject(ActivatedRoute) private route: ActivatedRoute, @Inject(Location) private location: Location) {}
 
   ngOnInit(): void {
     const queryParam = this.route.snapshot.queryParams.path;
