@@ -1,5 +1,5 @@
-IMG ?= ghcr.io/kubeflow/dashboard/dashboard-angular
-TAG ?= $(shell git describe --tags --always --dirty)
+IMG ?= registry.aigoml.aigodev.com/kubeflow/dashboard/dashboard-angular
+TAG ?= v0.0.1
 COMMIT = $(shell git rev-parse HEAD)
 
 COMMON_LIB_COMMIT ?= $(shell head -n 1 frontend/COMMON_LIB_COMMIT)
