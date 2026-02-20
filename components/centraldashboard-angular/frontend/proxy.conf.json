@@ -27,5 +27,32 @@
     },
     "secure": false,
     "logLevel": "debug"
+  },
+  "/katib/*": {
+    "target": "http://localhost:8185/katib",
+    "pathRewrite": { "^/katib": "" },
+    "headers": {
+      "kubeflow-userid": "user"
+    },
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/kserve-endpoints/*": {
+    "target": "http://localhost:8186",
+    "pathRewrite": { "^/kserve-endpoints": "" },
+    "headers": {
+      "kubeflow-userid": "user"
+    },
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/docs/*": {
+    "target": "http://localhost:8187",
+    "pathRewrite": { "^/docs": "" },
+    "headers": {
+      "kubeflow-userid": "user"
+    },
+    "secure": false,
+    "logLevel": "debug"
   }
 }

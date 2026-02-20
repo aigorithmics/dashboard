@@ -3,14 +3,53 @@
   background: white;
 }
 
-.sidenav {
-  width: 200px;
+mat-sidenav {
+  width: 240px;
   // Mat toolbar row has a min-height of 64px
   margin-bottom: 64px;
+  background-color: #0a3b71;
 }
 
-.sidenav .mat-toolbar {
-  background: white;
+mat-sidenav .mat-toolbar {
+  background: #0a3b71;
+}
+
+mat-list-item {
+  color: #91A7C0;
+}
+
+mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+mat-toolbar {
+  background-color: white;
+}
+
+.text-white {
+  color: #91A7C0!important;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+mat-expansion-panel {
+  background: none;
+  box-shadow: none !important;
+  color: #91A7C0;
+}
+
+mat-divider {
+  border-top-color: #91A7C0;
+}
+mat-expansion-panel-header {
+  padding-left: 28px;
+  font-size: 16px;
 }
 
 .main-page-content {
@@ -29,22 +68,24 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  color: white;
 }
 
 .footer {
   position: fixed;
   bottom: 0;
-  width: 200px;
+  width: 240px;
   border-right: solid 1px rgba(0, 0, 0, 0.12);
 }
 
 .footer-text {
   height: auto;
-  background-color: white;
+  background-color: #0a3b71;
   white-space: normal;
   word-break: break-all;
   position: absolute;
   bottom: 0;
+  color: white;
 
   .buildId {
     display: none;
@@ -60,5 +101,19 @@
 }
 
 .active {
-  background-color: #ececec;
+  background-color: #285382;
+  // opacity: 0.2;
+  color: white !important;
+}
+
+app-namespace-selector {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 24px;
+}
+
+.pointer {
+  cursor: pointer;
 }

@@ -1,7 +1,6 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav
     #drawer
-    class="sidenav"
     fixedInViewport
     [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
@@ -16,20 +15,79 @@
         [routerLinkActive]="['active']"
         [routerLinkActiveOptions]="{ exact: true }"
         [attr.data-cy-sidenav-menu-item]="'Home'"
-        >Home</a
-      >
-      <a
-        mat-list-item
-        *ngFor="let link of menuLinks"
-        [routerLink]="getUrlPath(link.link, currentNamespace)"
-        [fragment]="getUrlFragment(link.link)"
-        [queryParams]="getNamespaceParams(currentNamespace)"
-        [class.active]="isLinkActive(link.link)"
-        [attr.data-cy-sidenav-menu-item]="link.text"
-      >
-        {{ link.text }}
-      </a>
+        >
+        <span class="text-white center">
+        <mat-icon>home</mat-icon> Home
+        </span>
+    </a>
+      @for (link of menuLinks; track $index) {
+        @if (link.type === 'section' && link.items?.length) {
+          <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+              <mat-icon>{{ link.icon.split(':').pop() }}</mat-icon>{{ link.text }}
+            </mat-expansion-panel-header>
+            @for(subitem of link.items; track $index) {
+              <a
+                mat-list-item
+                [routerLink]="getUrlPath(subitem.link, currentNamespace)"
+                [fragment]="getUrlFragment(subitem.link)"
+                [queryParams]="getNamespaceParams(currentNamespace)"
+                [class.active]="isLinkActive(subitem.link)"
+                [attr.data-cy-sidenav-menu-item]="subitem.text"
+              >
+                <span class="text-white center">
+                  {{ subitem.text }}
+                </span>
+            </a>
+            }
+          </mat-expansion-panel>
+        } @else {
+          <a
+            mat-list-item
+            [routerLink]="getUrlPath(link.link, currentNamespace)"
+            [fragment]="getUrlFragment(link.link)"
+            [queryParams]="getNamespaceParams(currentNamespace)"
+            [class.active]="isLinkActive(link.link)"
+            [attr.data-cy-sidenav-menu-item]="link.text"
+          >
+            <span class="text-white center">
+              <mat-icon>{{ link.icon.split(':').pop() }}</mat-icon>{{ link.text }}
+            </span>
+        </a>
+        }
+        
+      }
+
+      @for(link of externalLinks; track $index) {
+        <a
+          mat-list-item
+          [href]="link.link"
+          [target]="link.iframe ? '' : '_blank'"
+          rel="noopener noreferrer"
+          [attr.data-cy-sidenav-menu-item]="link.text"
+        >
+          <span class="text-white center">
+            <mat-icon>{{ link.icon.split(':').pop() }}</mat-icon>{{ link.text }} <mat-icon>open_in_new</mat-icon>
+          </span>
+        </a>
+      }
+      
     </mat-nav-list>
+
+    <mat-divider />
+    @for(link of documentationItems; track $index) {
+        <a
+          mat-list-item
+          [href]="link.link"
+          target='_blank'
+          rel="noopener noreferrer"
+          [attr.data-cy-sidenav-menu-item]="link.text"
+        >
+          <span class="text-white center">
+            {{ link.text }} <mat-icon>open_in_new</mat-icon>
+          </span>
+        </a>
+      }
 
     <mat-toolbar class="footer">
       <mat-toolbar-row class="footer-text">
@@ -53,7 +111,7 @@
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <app-namespace-selector></app-namespace-selector>
+      <app-namespace-selector [logoutUrl]="logoutUrl()"></app-namespace-selector>
     </mat-toolbar>
     <router-outlet></router-outlet>
   </mat-sidenav-content>

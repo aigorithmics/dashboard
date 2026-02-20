@@ -4,4 +4,5 @@ export interface PlatformInfo {
   buildLabel?: string;
   buildVersion?: string;
   buildId?: string;
+  logoutUrl?: string;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, input, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { CDBNamespaceService } from 'src/app/services/namespace.service';
 import { Namespace } from 'src/app/types/namespace';
@@ -11,6 +11,8 @@ import { Namespace } from 'src/app/types/namespace';
 })
 export class NamespaceSelectorComponent implements OnInit {
   readonly NO_NAMESPACES = 'No namespaces';
+
+  public logoutUrl = input.required<string>();
 
   public namespaces: Namespace[];
   public ALL_NAMESPACES = this.ns.ALL_NAMESPACES;
@@ -52,7 +54,7 @@ export class NamespaceSelectorComponent implements OnInit {
     return role === 'owner';
   }
 
-  compareWith(o1: Namespace, o2: Namespace) {
+  compareWith(o1: Namespace, o2: Namespace): boolean {
     return o1.namespace === o2.namespace;
   }
 }

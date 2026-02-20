@@ -12,6 +12,8 @@ import { NamespaceSelectorComponent } from './namespace-selector/namespace-selec
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import {MatExpansionModule} from '@angular/material/expansion'; 
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [MainPageComponent, NamespaceSelectorComponent],
@@ -23,6 +25,8 @@ import { FormsModule } from '@angular/forms';
     MatSidenavModule,
     MatIconModule,
     MatListModule,
+    MatExpansionModule,
+    MatDividerModule,
     AppRoutingModule,
     MatFormFieldModule,
     MatSelectModule,

@@ -13,8 +13,10 @@
     }
   }
 
-  .mat-form-field-wrapper {
+  .mat-mdc-text-field-wrapper {
     padding: 0;
+    height: 40px;
+    align-items: center
   }
 
   .mat-form-field-outline {
@@ -50,4 +52,33 @@
     margin-left: 4px;
     font-size: 12px;
   }
+}
+
+.namespace-selector {
+  margin-top: 8px;
+}
+
+mat-form-field {
+  height: 40px;
+}
+
+mat-select { 
+  border: none;
+}
+
+.trigger-inner-wrapper {
+  border: none!important;
+}
+
+.logout-wrapper {
+  width: 160px;
+  height: 80px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout {
+  color: black;
 }

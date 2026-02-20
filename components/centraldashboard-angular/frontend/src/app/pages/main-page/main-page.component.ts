@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -27,6 +27,8 @@ export class MainPageComponent implements OnInit {
       map(result => result.matches),
       shareReplay(),
     );
+
+  public logoutUrl = signal<string>('logout'); 
 
   public buildLabel: string = 'Build';
   public buildVersion: string = environment.buildVersion;
@@ -75,14 +77,20 @@ export class MainPageComponent implements OnInit {
   }
 
   storeBuildInfo(platform: PlatformInfo) {
-    if (platform?.buildLabel) {
+    if (!platform) {
+      return;
+    }
+    if (platform.buildLabel) {
       this.buildLabel = platform.buildLabel;
     }
-    if (platform?.buildVersion) {
+    if (platform.buildVersion) {
       this.buildVersion = platform.buildVersion;
     }
-    if (platform?.buildId) {
+    if (platform.buildId) {
       this.buildId = platform.buildId;
+    }
+    if (platform.logoutUrl) {
+      this.logoutUrl.set(platform.logoutUrl);
     }
   }
 
