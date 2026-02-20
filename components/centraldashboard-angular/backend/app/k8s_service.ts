@@ -6,6 +6,7 @@ const {
   KF_DASHBOARD_BUILD_LABEL = "Build",
   KF_DASHBOARD_VERSION = null,
   KF_DASHBOARD_BUILD_ID = null,
+  LOGOUT_URL = null,
 } = process.env;
 
 /** Information about the Kubernetes hosting platform. */
@@ -15,6 +16,7 @@ export interface PlatformInfo {
   buildLabel: string;
   buildVersion: string;
   buildId: string;
+  logoutUrl: string;
 }
 
 /** Wrap Kubernetes API calls in a simpler interface for use in routes. */
@@ -81,6 +83,7 @@ export class KubernetesService {
         buildLabel: KF_DASHBOARD_BUILD_LABEL,
         buildVersion: KF_DASHBOARD_VERSION,
         buildId: KF_DASHBOARD_BUILD_ID,
+        logoutUrl: LOGOUT_URL
       };
     } catch (err) {
       console.error('Unexpected error', err);
