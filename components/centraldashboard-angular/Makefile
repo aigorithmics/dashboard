@@ -1,5 +1,5 @@
 IMG ?= registry.aigoml.aigodev.com/kubeflow/dashboard/dashboard-angular
-TAG ?= v0.0.2
+TAG ?= v0.0.3
 COMMIT = $(shell git rev-parse HEAD)
 
 COMMON_LIB_COMMIT ?= $(shell head -n 1 frontend/COMMON_LIB_COMMIT)
