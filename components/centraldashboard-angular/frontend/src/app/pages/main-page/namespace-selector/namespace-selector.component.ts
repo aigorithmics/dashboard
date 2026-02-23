@@ -4,10 +4,11 @@ import { CDBNamespaceService } from 'src/app/services/namespace.service';
 import { Namespace } from 'src/app/types/namespace';
 
 @Component({
-  selector: 'app-namespace-selector',
-  templateUrl: './namespace-selector.component.html',
-  styleUrls: ['./namespace-selector.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-namespace-selector',
+    templateUrl: './namespace-selector.component.html',
+    styleUrls: ['./namespace-selector.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class NamespaceSelectorComponent implements OnInit {
   readonly NO_NAMESPACES = 'No namespaces';

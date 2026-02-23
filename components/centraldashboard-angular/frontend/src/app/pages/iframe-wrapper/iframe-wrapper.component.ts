@@ -24,9 +24,10 @@ import {
 } from '../../../../public/library';
 
 @Component({
-  selector: 'app-iframe-wrapper',
-  templateUrl: './iframe-wrapper.component.html',
-  styleUrls: ['./iframe-wrapper.component.scss'],
+    selector: 'app-iframe-wrapper',
+    templateUrl: './iframe-wrapper.component.html',
+    styleUrls: ['./iframe-wrapper.component.scss'],
+    standalone: false
 })
 export class IframeWrapperComponent implements AfterViewInit, OnDestroy {
   @ViewChild('iframe') iframe: ElementRef<HTMLIFrameElement>;

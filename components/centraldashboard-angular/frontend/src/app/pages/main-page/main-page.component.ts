@@ -16,9 +16,10 @@ import { CDBNamespaceService } from 'src/app/services/namespace.service';
 import { Namespace } from 'src/app/types/namespace';
 
 @Component({
-  selector: 'app-main-page',
-  templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss'],
+    selector: 'app-main-page',
+    templateUrl: './main-page.component.html',
+    styleUrls: ['./main-page.component.scss'],
+    standalone: false
 })
 export class MainPageComponent implements OnInit {
   isHandset$: Observable<boolean> = this.breakpointObserver

@@ -1,11 +1,14 @@
 {
-  "/api": {
-   "target": "http://localhost:8082"
+  "/api/**": {
+   "target": "http://localhost:8082",
+   "headers": {
+      "kubeflow-userid": "user"
+    }
   },
   "/dashboard_lib.bundle.js": {
     "target": "http://localhost:4200/assets/"
   },
-  "/jupyter/*": {
+  "/jupyter/**": {
     "target": "http://localhost:8085",
     "pathRewrite": { "^/jupyter": "" },
     "headers": {
@@ -14,7 +17,7 @@
     "secure": false,
     "logLevel": "debug"
   },
-  "/pipeline/*": {
+  "/pipeline/**": {
     "target": "http://localhost:8086",
     "pathRewrite": { "^/pipeline": "" },
     "headers": {
@@ -23,7 +26,7 @@
     "secure": false,
     "logLevel": "debug"
   },
-  "/volumes/*": {
+  "/volumes/**": {
     "target": "http://localhost:8087",
     "pathRewrite": { "^/volumes": "" },
     "headers": {
@@ -32,7 +35,7 @@
     "secure": false,
     "logLevel": "debug"
   },
-  "/katib/*": {
+  "/katib/**": {
     "target": "http://localhost:8185/katib",
     "pathRewrite": { "^/katib": "" },
     "headers": {
@@ -41,7 +44,7 @@
     "secure": false,
     "logLevel": "debug"
   },
-  "/kserve-endpoints/*": {
+  "/kserve-endpoints/**": {
     "target": "http://localhost:8186",
     "pathRewrite": { "^/kserve-endpoints": "" },
     "headers": {
@@ -50,7 +53,7 @@
     "secure": false,
     "logLevel": "debug"
   },
-  "/docs/*": {
+  "/docs/**": {
     "target": "http://localhost:8187",
     "pathRewrite": { "^/docs": "" },
     "headers": {

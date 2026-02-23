@@ -4,9 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-namespace-needed-page',
-  templateUrl: './namespace-needed-page.component.html',
-  styleUrls: ['./namespace-needed-page.component.scss'],
+    selector: 'app-namespace-needed-page',
+    templateUrl: './namespace-needed-page.component.html',
+    styleUrls: ['./namespace-needed-page.component.scss'],
+    standalone: false
 })
 export class NamespaceNeededPageComponent implements OnInit, OnDestroy {
   private sub: Subscription;
