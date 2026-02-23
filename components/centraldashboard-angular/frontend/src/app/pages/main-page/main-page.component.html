@@ -5,7 +5,7 @@
     [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="(isHandset$ | async) === false && !isIframed"
-  >
+    >
     <mat-toolbar class="nav-toolbar">Menu</mat-toolbar>
     <mat-nav-list>
       <a
@@ -17,9 +17,9 @@
         [attr.data-cy-sidenav-menu-item]="'Home'"
         >
         <span class="text-white center">
-        <mat-icon>home</mat-icon> Home
+          <mat-icon>home</mat-icon> Home
         </span>
-    </a>
+      </a>
       @for (link of menuLinks; track $index) {
         @if (link.type === 'section' && link.items?.length) {
           <mat-expansion-panel hideToggle>
@@ -34,11 +34,11 @@
                 [queryParams]="getNamespaceParams(currentNamespace)"
                 [class.active]="isLinkActive(subitem.link)"
                 [attr.data-cy-sidenav-menu-item]="subitem.text"
-              >
+                >
                 <span class="text-white center">
                   {{ subitem.text }}
                 </span>
-            </a>
+              </a>
             }
           </mat-expansion-panel>
         } @else {
@@ -49,13 +49,13 @@
             [queryParams]="getNamespaceParams(currentNamespace)"
             [class.active]="isLinkActive(link.link)"
             [attr.data-cy-sidenav-menu-item]="link.text"
-          >
+            >
             <span class="text-white center">
               <mat-icon>{{ link.icon.split(':').pop() }}</mat-icon>{{ link.text }}
             </span>
-        </a>
+          </a>
         }
-        
+
       }
 
       @for(link of externalLinks; track $index) {
@@ -65,29 +65,29 @@
           [target]="link.iframe ? '' : '_blank'"
           rel="noopener noreferrer"
           [attr.data-cy-sidenav-menu-item]="link.text"
-        >
+          >
           <span class="text-white center">
             <mat-icon>{{ link.icon.split(':').pop() }}</mat-icon>{{ link.text }} <mat-icon>open_in_new</mat-icon>
           </span>
         </a>
       }
-      
+
     </mat-nav-list>
 
     <mat-divider />
     @for(link of documentationItems; track $index) {
-        <a
-          mat-list-item
-          [href]="link.link"
-          target='_blank'
-          rel="noopener noreferrer"
-          [attr.data-cy-sidenav-menu-item]="link.text"
+      <a
+        mat-list-item
+        [href]="link.link"
+        target='_blank'
+        rel="noopener noreferrer"
+        [attr.data-cy-sidenav-menu-item]="link.text"
         >
-          <span class="text-white center">
-            {{ link.text }} <mat-icon>open_in_new</mat-icon>
-          </span>
-        </a>
-      }
+        <span class="text-white center">
+          {{ link.text }} <mat-icon>open_in_new</mat-icon>
+        </span>
+      </a>
+    }
 
     <mat-toolbar class="footer">
       <mat-toolbar-row class="footer-text">
@@ -101,18 +101,21 @@
     </mat-toolbar>
   </mat-sidenav>
   <mat-sidenav-content class="main-page-content">
-    <mat-toolbar class="menu-toolbar" color="primary" *ngIf="!isIframed">
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async"
-      >
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <app-namespace-selector [logoutUrl]="logoutUrl()"></app-namespace-selector>
-    </mat-toolbar>
+    @if (!isIframed) {
+      <mat-toolbar class="menu-toolbar" color="primary">
+        @if (isHandset$ | async) {
+          <button
+            type="button"
+            aria-label="Toggle sidenav"
+            mat-icon-button
+            (click)="drawer.toggle()"
+            >
+            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+          </button>
+        }
+        <app-namespace-selector [logoutUrl]="logoutUrl()"></app-namespace-selector>
+      </mat-toolbar>
+    }
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
