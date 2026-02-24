@@ -43,9 +43,5 @@
         }
       }
     }
-  },
-  "defaultProject": "kubeflow",
-  "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
   }
 }
