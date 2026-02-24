@@ -44,9 +44,9 @@ FROM node:24.13.1-alpine AS serve
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=backend /src .
-COPY --from=frontend /src/dist/default/ ./dist/public/
-COPY --from=frontend /src/dist/default/assets/dashboard_lib.bundle.js ./dist/public/
-COPY --from=frontend /src/dist/default/assets/dashboard_lib.bundle.js.map ./dist/public/
+COPY --from=frontend /src/dist/default/browser/ ./dist/public/
+COPY --from=frontend /src/dist/default/browser/assets/dashboard_lib.bundle.js ./dist/public/
+COPY --from=frontend /src/dist/default/browser/assets/dashboard_lib.bundle.js.map ./dist/public/
 
 EXPOSE 8082
 ENTRYPOINT ["npm", "start"]
