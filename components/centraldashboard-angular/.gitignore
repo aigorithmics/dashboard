@@ -1,2 +1,4 @@
 # dependencies
-/kubeflow-common-lib
+/kubeflow-common-lib/node_modules
+/kubeflow-common-lib/.angular
+/kubeflow-common-lib/dist
