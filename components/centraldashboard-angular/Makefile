@@ -25,8 +25,7 @@ build-common-lib: fetch-common-lib
 
 # To build without the cache set the environment variable
 # export DOCKER_BUILD_OPTS=--no-cache
-docker-build: fetch-common-lib
-	docker build ${DOCKER_BUILD_OPTS} -t $(IMG):$(TAG) -f Dockerfile . \
+docker-build: docker build ${DOCKER_BUILD_OPTS} -t $(IMG):$(TAG) -f Dockerfile . \
 		--build-arg kubeflowversion=$(shell git describe --abbrev=0 --tags || git rev-parse --abbrev-ref HEAD) \
 		--build-arg commit=$(COMMIT) \
 		--label=git-version=$(TAG)
