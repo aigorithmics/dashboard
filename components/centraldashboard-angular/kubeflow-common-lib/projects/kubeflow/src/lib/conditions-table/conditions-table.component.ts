@@ -5,10 +5,11 @@ import { generateConfig } from './config';
 import { TableConfig } from '../resource-table/types';
 
 @Component({
-  selector: 'lib-conditions-table',
-  templateUrl: './conditions-table.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: [],
+    selector: 'lib-conditions-table',
+    templateUrl: './conditions-table.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrls: [],
+    standalone: false
 })
 export class ConditionsTableComponent {
   private conditionsPrv: ConditionIR[] = [];

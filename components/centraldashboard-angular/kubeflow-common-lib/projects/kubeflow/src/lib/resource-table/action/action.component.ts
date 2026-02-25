@@ -5,9 +5,10 @@ import { ActionIconValue, ActionEvent } from '../types';
 import { get as getAttributeValue } from 'lodash-es';
 
 @Component({
-  selector: 'lib-action',
-  templateUrl: './action.component.html',
-  styleUrls: ['./action.component.scss'],
+    selector: 'lib-action',
+    templateUrl: './action.component.html',
+    styleUrls: ['./action.component.scss'],
+    standalone: false
 })
 export class ActionComponent implements OnInit {
   // READY: Button will be enabled

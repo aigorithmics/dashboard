@@ -14,9 +14,10 @@ import {
 } from './types';
 
 @Component({
-  selector: 'lib-resource-table',
-  templateUrl: './resource-table.component.html',
-  styleUrls: ['./resource-table.component.scss'],
+    selector: 'lib-resource-table',
+    templateUrl: './resource-table.component.html',
+    styleUrls: ['./resource-table.component.scss'],
+    standalone: false
 })
 export class ResourceTableComponent implements OnInit {
   @Input() config: TableConfig;

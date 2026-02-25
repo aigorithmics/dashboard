@@ -3,9 +3,10 @@ import { ChipsListValue } from '../types';
 import { ChipDescriptor } from '../../details-list/types';
 
 @Component({
-  selector: 'lib-table-chips-list',
-  templateUrl: './chips-list.component.html',
-  styleUrls: ['./chips-list.component.scss'],
+    selector: 'lib-table-chips-list',
+    templateUrl: './chips-list.component.html',
+    styleUrls: ['./chips-list.component.scss'],
+    standalone: false
 })
 export class TableChipsListComponent {
   @Input() element: any;

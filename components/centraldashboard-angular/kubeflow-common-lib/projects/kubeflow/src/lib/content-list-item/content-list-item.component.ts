@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-content-list-item',
-  templateUrl: './content-list-item.component.html',
-  styleUrls: ['./content-list-item.component.scss'],
+    selector: 'lib-content-list-item',
+    templateUrl: './content-list-item.component.html',
+    styleUrls: ['./content-list-item.component.scss'],
+    standalone: false
 })
 export class ContentListItemComponent implements OnInit {
   @Input() key: string;

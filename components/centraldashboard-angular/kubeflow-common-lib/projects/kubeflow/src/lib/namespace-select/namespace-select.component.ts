@@ -5,9 +5,10 @@ import { ExponentialBackoff } from '../polling/exponential-backoff';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'lib-namespace-select',
-  templateUrl: './namespace-select.component.html',
-  styleUrls: ['./namespace-select.component.scss'],
+    selector: 'lib-namespace-select',
+    templateUrl: './namespace-select.component.html',
+    styleUrls: ['./namespace-select.component.scss'],
+    standalone: false
 })
 export class NamespaceSelectComponent implements OnInit, OnDestroy {
   @Input()

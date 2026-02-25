@@ -64,7 +64,8 @@ $kubeflow-theme: mat.define-light-theme(
 // Always include only once per project.
 // Passing the typography config to core mixin will apply the specified values
 // to the corresponding Angular Material components.
-@include mat.core($kubeflow-typography-config);
+@include mat.elevation-classes();
+@include mat.app-background();
 
 // Include theme styles for core and each component used in the app.
 // Alternatively, you can import and @include the theme mixins for each

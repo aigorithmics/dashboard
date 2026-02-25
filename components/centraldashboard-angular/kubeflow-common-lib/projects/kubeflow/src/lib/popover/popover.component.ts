@@ -23,10 +23,11 @@ export class PopoverTemplatePortal<C> extends TemplatePortal<C> {
 }
 
 @Component({
-  selector: 'lib-popover',
-  templateUrl: './popover.component.html',
-  styleUrls: ['./popover.scss'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'lib-popover',
+    templateUrl: './popover.component.html',
+    styleUrls: ['./popover.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PopoverComponent {
   private classListPrv: string[] = ['lib-popover'];

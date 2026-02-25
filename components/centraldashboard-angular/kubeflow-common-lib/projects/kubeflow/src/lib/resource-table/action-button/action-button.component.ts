@@ -3,9 +3,10 @@ import { STATUS_TYPE } from '../status/types';
 import { ActionButtonValue, ActionEvent } from '../types';
 
 @Component({
-  selector: 'lib-action-button',
-  templateUrl: './action-button.component.html',
-  styleUrls: ['./action-button.component.scss'],
+    selector: 'lib-action-button',
+    templateUrl: './action-button.component.html',
+    styleUrls: ['./action-button.component.scss'],
+    standalone: false
 })
 export class ActionButtonComponent implements OnInit {
   @Input()

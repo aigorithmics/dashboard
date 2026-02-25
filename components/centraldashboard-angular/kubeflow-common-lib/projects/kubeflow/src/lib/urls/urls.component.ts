@@ -2,9 +2,10 @@ import { Component, Input, TrackByFunction } from '@angular/core';
 import { UrlItem } from './types';
 
 @Component({
-  selector: 'lib-urls',
-  templateUrl: './urls.component.html',
-  styleUrls: ['./urls.component.scss'],
+    selector: 'lib-urls',
+    templateUrl: './urls.component.html',
+    styleUrls: ['./urls.component.scss'],
+    standalone: false
 })
 export class UrlsComponent {
   @Input() urlList: UrlItem[];

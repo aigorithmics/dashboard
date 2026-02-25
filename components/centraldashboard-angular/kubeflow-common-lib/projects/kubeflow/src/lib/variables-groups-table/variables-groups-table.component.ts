@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { VariablesGroup } from './types';
 
 @Component({
-  selector: 'lib-variables-group-table',
-  templateUrl: './variables-groups-table.component.html',
-  styleUrls: ['./variables-groups-table.component.scss'],
+    selector: 'lib-variables-group-table',
+    templateUrl: './variables-groups-table.component.html',
+    styleUrls: ['./variables-groups-table.component.scss'],
+    standalone: false
 })
 export class VariablesGroupsTableComponent implements OnInit {
   private prvEnvGroups: VariablesGroup[];

@@ -23,8 +23,9 @@ import { quantityToScalar } from './utils';
 import { STATUS_TYPE } from '../status/types';
 
 @Component({
-  selector: 'lib-server-type',
-  template: ``,
+    selector: 'lib-server-type',
+    template: ``,
+    standalone: false
 })
 export class ServerTypeComponent implements TableColumnComponent {
   constructor() {}

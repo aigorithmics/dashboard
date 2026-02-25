@@ -8,9 +8,10 @@ import {
 import { ToolbarButton } from './types';
 
 @Component({
-  selector: 'lib-title-actions-toolbar',
-  templateUrl: './title-actions-toolbar.component.html',
-  styleUrls: ['./title-actions-toolbar.component.scss'],
+    selector: 'lib-title-actions-toolbar',
+    templateUrl: './title-actions-toolbar.component.html',
+    styleUrls: ['./title-actions-toolbar.component.scss'],
+    standalone: false
 })
 export class TitleActionsToolbarComponent {
   @Input() buttons: ToolbarButton[] = [];

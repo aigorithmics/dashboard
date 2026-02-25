@@ -1,9 +1,10 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
-  selector: 'lib-submit-bar',
-  templateUrl: './submit-bar.component.html',
-  styleUrls: ['./submit-bar.component.scss'],
+    selector: 'lib-submit-bar',
+    templateUrl: './submit-bar.component.html',
+    styleUrls: ['./submit-bar.component.scss'],
+    standalone: false
 })
 export class SubmitBarComponent implements OnInit {
   @Input() createDisabled = false;

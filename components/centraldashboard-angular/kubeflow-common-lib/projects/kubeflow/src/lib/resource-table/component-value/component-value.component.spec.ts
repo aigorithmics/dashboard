@@ -14,16 +14,18 @@ interface MockData {
 }
 
 @Component({
-  selector: 'lib-dummy-component',
-  template: '{{ element }}',
+    selector: 'lib-dummy-component',
+    template: '{{ element }}',
+    standalone: false
 })
 class MockComponent implements TableColumnComponent {
   public element: string;
 }
 
 @Component({
-  selector: 'lib-dummy-dict-component',
-  template: '{{ element.message }}',
+    selector: 'lib-dummy-dict-component',
+    template: '{{ element.message }}',
+    standalone: false
 })
 class MockDictComponent implements TableColumnComponent {
   public element: MockData;

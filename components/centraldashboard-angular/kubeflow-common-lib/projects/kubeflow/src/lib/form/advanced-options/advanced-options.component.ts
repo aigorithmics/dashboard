@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'lib-advanced-options',
-  templateUrl: './advanced-options.component.html',
-  styleUrls: ['./advanced-options.component.scss'],
+    selector: 'lib-advanced-options',
+    templateUrl: './advanced-options.component.html',
+    styleUrls: ['./advanced-options.component.scss'],
+    standalone: false
 })
 export class AdvancedOptionsComponent implements OnInit, AfterViewInit {
   @Input() sectionIsExpanded = false;

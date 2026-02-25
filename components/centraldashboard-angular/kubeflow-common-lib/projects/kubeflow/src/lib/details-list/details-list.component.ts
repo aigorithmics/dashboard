@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { ListEntry } from './types';
 
 @Component({
-  selector: 'lib-details-list',
-  templateUrl: './details-list.component.html',
-  styleUrls: ['./details-list.component.scss'],
+    selector: 'lib-details-list',
+    templateUrl: './details-list.component.html',
+    styleUrls: ['./details-list.component.scss'],
+    standalone: false
 })
 export class DetailsListComponent {
   @Input() entries: ListEntry[] = [];

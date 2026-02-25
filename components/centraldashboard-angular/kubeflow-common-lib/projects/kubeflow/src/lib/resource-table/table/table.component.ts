@@ -47,9 +47,10 @@ import { isEqual } from 'lodash-es';
 import { MemoryValue } from '../types/memory-value';
 
 @Component({
-  selector: 'lib-table',
-  templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss'],
+    selector: 'lib-table',
+    templateUrl: './table.component.html',
+    styleUrls: ['./table.component.scss'],
+    standalone: false
 })
 export class TableComponent
   implements AfterViewInit, OnInit, OnDestroy, OnChanges

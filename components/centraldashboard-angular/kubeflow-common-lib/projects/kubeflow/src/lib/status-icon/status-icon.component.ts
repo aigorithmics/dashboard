@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { STATUS_TYPE } from '../resource-table/status/types';
 
 @Component({
-  selector: 'lib-status-icon',
-  templateUrl: './status-icon.component.html',
-  styleUrls: ['./status-icon.component.scss'],
+    selector: 'lib-status-icon',
+    templateUrl: './status-icon.component.html',
+    styleUrls: ['./status-icon.component.scss'],
+    standalone: false
 })
 export class StatusIconComponent {
   @Input() phase: STATUS_TYPE;

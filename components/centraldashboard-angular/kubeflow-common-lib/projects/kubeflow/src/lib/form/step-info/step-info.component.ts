@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, HostBinding } from '@angular/core';
 
 @Component({
-  selector: 'lib-step-info',
-  templateUrl: './step-info.component.html',
-  styleUrls: ['./step-info.component.scss'],
+    selector: 'lib-step-info',
+    templateUrl: './step-info.component.html',
+    styleUrls: ['./step-info.component.scss'],
+    standalone: false
 })
 export class StepInfoComponent implements OnInit {
   @Input() header: string;
