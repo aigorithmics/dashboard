@@ -7,18 +7,19 @@
       [value]="currNamespace"
       (selectionChange)="namespaceChanged($event.value)"
       data-cy-namespace-selector-dropdown
-    >
+      >
       <mat-option data-cy-all-namespaces value="{all}">
         All namespaces
       </mat-option>
 
-      <mat-option
-        *ngFor="let namespace of namespaces"
-        [value]="namespace"
-        attr.data-cy-namespace="{{ namespace }}"
-      >
-        {{ namespace }}
-      </mat-option>
+      @for (namespace of namespaces; track namespace) {
+        <mat-option
+          [value]="namespace"
+          attr.data-cy-namespace="{{ namespace }}"
+          >
+          {{ namespace }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <div class="spacer"></div>

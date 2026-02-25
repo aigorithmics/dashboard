@@ -18,4 +18,5 @@ export interface ListEntry {
   bottomDivider?: boolean;
   copyValue?: any;
   keyMinWidth?: string;
+  valueType?: ListValueType;
 }

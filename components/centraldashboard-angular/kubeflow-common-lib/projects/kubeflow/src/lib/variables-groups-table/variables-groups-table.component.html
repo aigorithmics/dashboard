@@ -1,13 +1,19 @@
-<div class="env-group-container" *ngFor="let envGroup of envGroups">
-  <div class="group-key">{{ envGroup.name }}</div>
-  <mat-chip-listbox class="chip-list-wa">
-    <div *ngFor="let chip of envGroup.chipsList">
-      <mat-chip-option color="primary" class="list-chip">
-        {{ chip.value }}
-      </mat-chip-option>
-    </div>
-  </mat-chip-listbox>
-</div>
+@for (envGroup of envGroups; track envGroup) {
+  <div class="env-group-container">
+    <div class="group-key">{{ envGroup.name }}</div>
+    <mat-chip-listbox class="chip-list-wa">
+      @for (chip of envGroup.chipsList; track chip) {
+        <div>
+          <mat-chip-option color="primary" class="list-chip">
+            {{ chip.value }}
+          </mat-chip-option>
+        </div>
+      }
+    </mat-chip-listbox>
+  </div>
+}
 
 <ng-content class="vertical-align"> </ng-content>
-<div *ngIf="envGroupsEmpty() && loadCompleted">{{ loadErrorMsg }}</div>
+@if (envGroupsEmpty() && loadCompleted) {
+  <div>{{ loadErrorMsg }}</div>
+}

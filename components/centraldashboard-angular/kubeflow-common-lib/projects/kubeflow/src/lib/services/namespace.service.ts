@@ -10,6 +10,7 @@ import {
 } from 'rxjs';
 import { DashboardState } from '../enums/dashboard';
 
+export{};
 declare global {
   interface Window {
     centraldashboard: any;

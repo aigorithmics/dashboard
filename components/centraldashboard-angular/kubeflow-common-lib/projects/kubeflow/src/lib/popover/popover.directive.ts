@@ -10,6 +10,7 @@ import {
   NgZone,
   ComponentRef,
   Inject,
+  afterNextRender,
 } from '@angular/core';
 import {
   Overlay,
@@ -164,9 +165,7 @@ export class PopoverDirective implements OnDestroy {
   updatePosition() {
     if (this.popoverInstance) {
       this.popoverInstance.markForCheck();
-      this.ngZone.onMicrotaskEmpty.pipe(take(1)).subscribe(() => {
-        this.overlayRef.updatePosition();
-      });
+      afterNextRender(() => this.overlayRef.updatePosition());
     }
   }
 

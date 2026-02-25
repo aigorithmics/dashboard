@@ -6,8 +6,10 @@
     [min]="min"
     [step]="step"
     [formControl]="sizeControl"
-  />
-  <mat-error *ngIf="sizeControl.hasError('min')" i18n>
+    />
+  @if (sizeControl.hasError('min')) {
+    <mat-error i18n>
     Cannot be less than {{ min }}.
   </mat-error>
+  }
 </mat-form-field>

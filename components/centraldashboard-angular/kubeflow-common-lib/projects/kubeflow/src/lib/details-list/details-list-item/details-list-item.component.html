@@ -1,4 +1,6 @@
-<mat-divider *ngIf="topDivider"></mat-divider>
+@if (topDivider) {
+  <mat-divider></mat-divider>
+}
 
 <div class="list-entry-row">
   <!--key-->
@@ -6,72 +8,83 @@
     class="list-entry-key vertical-align"
     [matTooltip]="keyTooltip"
     [style.min-width]="keyMinWidth"
-  >
+    >
     {{ key }}
   </div>
 
   <!--value-->
   <div class="list-entry-value" [matTooltip]="valueTooltip">
-    <ng-container *ngIf="chipsList && chipsList.length > 0">
+    @if (chipsList && chipsList.length > 0) {
       <mat-chip-listbox class="chip-list-wa">
-        <mat-chip-option
-          *ngFor="let chip of chipsList"
-          [color]="chip.color"
-          [matTooltip]="chip.tooltip"
-          matTooltipClass="custom-tooltip"
-          class="list-chip"
-        >
-          {{ chip.value }}
-        </mat-chip-option>
+        @for (chip of chipsList; track chip) {
+          <mat-chip-option
+            [color]="chip.color"
+            [matTooltip]="chip.tooltip"
+            matTooltipClass="custom-tooltip"
+            class="list-chip"
+            >
+            {{ chip.value }}
+          </mat-chip-option>
+        }
       </mat-chip-listbox>
-    </ng-container>
+    }
 
-    <div *ngIf="value" class="flex">
-      <div class="icon" *ngIf="icon">
-        <mat-icon [inline]="true" [ngClass]="getClasses()">
-          {{ icon }}
-        </mat-icon>
+    @if (value) {
+      <div class="flex">
+        @if (icon) {
+          <div class="icon">
+            <mat-icon [inline]="true" [ngClass]="getClasses()">
+              {{ icon }}
+            </mat-icon>
+          </div>
+        }
+        {{ value }}
+        @if (copyValue) {
+          <div class="icon">
+            <mat-icon
+              class="copy-button key-icon"
+              matRipple
+              [matRippleRadius]="16"
+              [matRippleCentered]="true"
+              [inline]="true"
+              (click)="copy()"
+              >
+              content_copy
+            </mat-icon>
+          </div>
+        }
       </div>
+    }
 
-      {{ value }}
-
-      <div class="icon" *ngIf="copyValue">
-        <mat-icon
-          class="copy-button key-icon"
-          matRipple
-          matRippleRadius="16"
-          [matRippleCentered]="true"
-          [inline]="true"
-          (click)="copy()"
-        >
-          content_copy
-        </mat-icon>
+    @if (!value) {
+      <div class="flex">
+        @if (icon) {
+          <div class="icon">
+            <mat-icon [inline]="true" [ngClass]="getClasses()">
+              {{ icon }}
+            </mat-icon>
+          </div>
+        }
+        <ng-content class="vertical-align"> </ng-content>
+        @if (copyValue) {
+          <div class="icon">
+            <mat-icon
+              class="copy-button key-icon"
+              matRipple
+              [matRippleRadius]="16"
+              [matRippleCentered]="true"
+              [inline]="true"
+              (click)="copy()"
+              >
+              content_copy
+            </mat-icon>
+          </div>
+        }
       </div>
-    </div>
-
-    <div *ngIf="!value" class="flex">
-      <div class="icon" *ngIf="icon">
-        <mat-icon [inline]="true" [ngClass]="getClasses()">
-          {{ icon }}
-        </mat-icon>
-      </div>
-
-      <ng-content class="vertical-align"> </ng-content>
-
-      <div class="icon" *ngIf="copyValue">
-        <mat-icon
-          class="copy-button key-icon"
-          matRipple
-          matRippleRadius="16"
-          [matRippleCentered]="true"
-          [inline]="true"
-          (click)="copy()"
-        >
-          content_copy
-        </mat-icon>
-      </div>
-    </div>
+    }
   </div>
 </div>
 
-<mat-divider *ngIf="bottomDivider"></mat-divider>
+@if (bottomDivider) {
+  <mat-divider></mat-divider>
+}

@@ -4,7 +4,7 @@
   [libPopoverHideDelay]="100"
   [libPopoverShowDelay]="100"
   class="truncate"
->
+  >
   <mat-icon>help</mat-icon>
 </span>
 
@@ -33,7 +33,7 @@
       </mat-chip>
     </p>
     <mat-divider></mat-divider>
-    <ng-template [ngIf]="showStatus">
+    @if (showStatus) {
       <p><b>Status</b></p>
       <p>Filter based on the objects' status, by using:</p>
       <ul>
@@ -43,34 +43,34 @@
           <i
             >ready, waiting, warning, error, unavailable, uninitialized,
             terminating, stopped</i
-          >)
-        </li>
-      </ul>
-    </ng-template>
-    <mat-divider></mat-divider>
-    <ng-template [ngIf]="showDate">
-      <p><b>Date</b></p>
-      <p>Filter timestamp values based on:</p>
-      <ul>
-        <li>
-          <span
-            >The "-" character for empty date values:
-            <mat-chip class="mat-chip-blue">
-              Created at: -
-              <button matChipRemove>
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </mat-chip>
-          </span>
-        </li>
-        <li>
-          The relative time text, shown in the column (i.e. <i>X months ago</i>)
-        </li>
-        <li>
-          The substring of the timestamp, that is shown in the UTC part of the
-          tooltip
-        </li>
-      </ul>
-    </ng-template>
-  </div>
-</ng-template>
+            >)
+          </li>
+        </ul>
+      }
+      <mat-divider></mat-divider>
+      @if (showDate) {
+        <p><b>Date</b></p>
+        <p>Filter timestamp values based on:</p>
+        <ul>
+          <li>
+            <span
+              >The "-" character for empty date values:
+              <mat-chip class="mat-chip-blue">
+                Created at: -
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </span>
+          </li>
+          <li>
+            The relative time text, shown in the column (i.e. <i>X months ago</i>)
+          </li>
+          <li>
+            The substring of the timestamp, that is shown in the UTC part of the
+            tooltip
+          </li>
+        </ul>
+      }
+    </div>
+  </ng-template>
