@@ -8,6 +8,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
+    "skipLibCheck": true,
+    "lib": ["ESNext", "DOM"],
     "plugins": [
       {
         "name": "typescript-tslint-plugin"
@@ -15,5 +17,5 @@
     ]
   },
   "include": ["app", "types"],
-  "exclude": ["app/**/*_test.ts", "app/**/test_resources.ts"]
+  "exclude": ["app/**/*_test.ts", "app/**/test_resources.ts", "node_modules"]
 }

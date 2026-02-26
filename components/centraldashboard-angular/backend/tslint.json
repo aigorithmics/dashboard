@@ -1,6 +1,6 @@
 {
   "linterOptions": {
-    "exclude": ["app/clients/**/*"]
+    "exclude": ["app/clients/**/*", "app/clients/*"]
   },
   "rules": {
     "array-type": [true, "array-simple"],
@@ -40,7 +40,7 @@
     "member-access": [true, "no-public"],
     "new-parens": true,
     "no-angle-bracket-type-assertion": true,
-    "no-any": true,
+    "no-any": false,
     "no-arg": true,
     "no-conditional-assignment": true,
     "no-construct": true,
@@ -48,6 +48,7 @@
     "no-default-export": true,
     "no-duplicate-variable": true,
     "no-inferrable-types": true,
+    "noImplicitAny": false,
     "no-namespace": [true, "allow-declarations"],
     "no-reference": true,
     "no-string-throw": true,

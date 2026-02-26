@@ -99,76 +99,75 @@ export class Api {
   routes(): Router {
     return Router()
         .get(
-            '/metrics/:type((node|podcpu|podmem))',
+            '/metrics/:type', 
             async (req: Request, res: Response) => {
-              if (!this.metricsService) {
-                return apiError({
-                  res, code: 405,
-                  error: ERRORS.operation_not_supported,
-                });
+              const { type } = req.params;
+              const validTypes = ['node', 'podcpu', 'podmem'];
+              if (!validTypes.includes(type as string)) {
+                  return res.status(400).json({ 
+                      error: `Invalid metric type. Expected one of: ${validTypes.join(', ')}` 
+                  });
               }
+                if (!this.metricsService) {
+                    return apiError({
+                        res, code: 405,
+                        error: ERRORS.operation_not_supported,
+                    });
+                }
 
-              let interval = Interval.Last15m;
-              if (Interval[req.query.interval] !== undefined) {
-                interval = Number(Interval[req.query.interval]);
-              }
-              switch (req.params.type) {
-                case 'node':
-                  res.json(await this.metricsService.getNodeCpuUtilization(
-                      interval));
-                  break;
-                case 'podcpu':
-                  res.json(
-                      await this.metricsService.getPodCpuUtilization(interval));
-                  break;
-                case 'podmem':
-                  res.json(
-                      await this.metricsService.getPodMemoryUsage(interval));
-                  break;
-                default:
-              }
+                let interval = Interval.Last15m;
+                const queryInterval = req.query.interval as string;
+                if (queryInterval && Interval[queryInterval as any] !== undefined) {
+                    interval = Number(Interval[queryInterval as any]);
+                }
+
+                try {
+                    switch (req.params.type) {
+                        case 'node':
+                            return res.json(await this.metricsService.getNodeCpuUtilization(interval));
+                        case 'podcpu':
+                            return res.json(await this.metricsService.getPodCpuUtilization(interval));
+                        case 'podmem':
+                            return res.json(await this.metricsService.getPodMemoryUsage(interval));
+                        default:
+                            return res.status(400).json({ error: "Invalid metric type" });
+                    }
+                } catch (e) {
+                    return apiError({ res, code: 500, error: ERRORS.invalid_settings });
+                }
             })
         .get(
             '/namespaces',
             async (_: Request, res: Response) => {
-              res.json(await this.k8sService.getNamespaces());
+                res.json(await this.k8sService.getNamespaces());
             })
         .get(
             '/activities/:namespace',
             this.checkNamespaceAccess.bind(this),
             async (req: Request, res: Response) => {
-              res.json(await this.k8sService.getEventsForNamespace(
-                  req.params.namespace));
+                res.json(await this.k8sService.getEventsForNamespace(req.params.namespace as string));
             })
         .get(
           '/dashboard-links',
           async (_: Request, res: Response) => {
-            const cm = await this.k8sService.getConfigMap();
-            let links = {};
             try {
-              links=JSON.parse(cm.data["links"]);
-            }catch(e){
-              return apiError({
-                res, code: 500,
-                error: ERRORS.invalid_links_config,
-              });
+              const cm = await this.k8sService.getConfigMap();
+              const links = cm.data && cm.data["links"] ? JSON.parse(cm.data["links"]) : {};
+              res.json(links);
+            } catch (e) {
+              return apiError({ res, code: 500, error: ERRORS.invalid_links_config });
             }
-            res.json(links);
           })
         .get(
           '/dashboard-settings',
           async (_: Request, res: Response) => {
-            const cm = await this.k8sService.getConfigMap();
-            let settings = {};
             try {
-              settings=JSON.parse(cm.data["settings"]);
-            }catch(e){
-              return apiError({
-                res, code: 500,
-                error: ERRORS.invalid_settings,
-              });
+              const cm = await this.k8sService.getConfigMap();
+              const settings = cm.data && cm.data["settings"] ? JSON.parse(cm.data["settings"]) : {};
+              res.json(settings);
+            } catch (e) {
+              return apiError({ res, code: 500, error: ERRORS.invalid_settings });
             }
-            res.json(settings);
           });
-  }
+}
 }

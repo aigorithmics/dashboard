@@ -162,7 +162,7 @@ export class WorkgroupApi {
     async getAllWorkgroups(fakeUser: string): Promise<SimpleBinding[]> {
         const bindings = await this.profilesService.readBindings();
         const namespaces = mapWorkgroupBindingToSimpleBinding(
-            bindings.body.bindings || []
+            bindings.bindings || []
         );
         const names = new Set(namespaces.map((n) => n.namespace));
         return Array.from(names).map((n) => ({
@@ -175,15 +175,15 @@ export class WorkgroupApi {
      * Retrieves WorkgroupInfo from Profile Controller for the given user.
      */
     async getWorkgroupInfo(user: User.User): Promise<WorkgroupInfo> {
-        const [adminResponse, bindings] = await Promise.all([
+        const [isClusterAdmin, bindings] = await Promise.all([
             this.profilesService.v1RoleClusteradminGet(user.email),
             this.profilesService.readBindings(user.email),
         ]);
         const namespaces = mapWorkgroupBindingToSimpleBinding(
-            bindings.body.bindings || []
+            bindings.bindings || [] 
         );
         return {
-            isClusterAdmin: adminResponse.body,
+            isClusterAdmin, 
             namespaces,
         };
     }
@@ -212,7 +212,7 @@ export class WorkgroupApi {
         try {
             const binding = mapSimpleBindingToWorkgroupBinding({
                 user: contributor,
-                namespace,
+                namespace: namespace as unknown as string,
                 role: 'contributor',
             });
             // only pass the auth-related headers from the user's request on to kfam
@@ -224,7 +224,7 @@ export class WorkgroupApi {
             const actionAPI = action === 'create' ? 'createBinding' : 'deleteBinding';
             await profilesService[actionAPI](binding, {headers});
             errIndex++;
-            const users = await this.getContributors(namespace);
+            const users = await this.getContributors(namespace as unknown as string);
             res.json(users);
         } catch (err) {
             const errMessage = [
@@ -243,9 +243,9 @@ export class WorkgroupApi {
      * @param namespace Namespace to find contributors for
      */
     async getContributors(namespace: string) {
-        const {body} = await this.profilesService
+        const {bindings} = await this.profilesService
             .readBindings(undefined, namespace);
-        const users = mapWorkgroupBindingToSimpleBinding(body.bindings)
+        const users = mapWorkgroupBindingToSimpleBinding(bindings)
             .filter((b) => b.role === 'contributor')
             .map((b) => b.user);
         return users;
@@ -342,13 +342,13 @@ export class WorkgroupApi {
         })
         .get('/get-all-namespaces', async (req: Request, res: Response) => {
             try {
-                const {body} = await this.profilesService.readBindings();
+                const {bindings} = await this.profilesService.readBindings();
                 // tslint:disable-next-line: no-any
                 const namespaces = {} as any;
-                const bindings = mapWorkgroupBindingToSimpleBinding(
-                    body.bindings
+                const simpleBindings = mapWorkgroupBindingToSimpleBinding(
+                    bindings
                 );
-                bindings.forEach((b) => {
+                simpleBindings.forEach((b) => {
                     const name = b.namespace;
                     if (!namespaces[name]) {namespaces[name] = {contributors: []};}
                     const namespace = namespaces[name];
@@ -372,7 +372,7 @@ export class WorkgroupApi {
         .get('/get-contributors/:namespace', async (req: Request, res: Response) => {
             const {namespace} = req.params;
             try {
-                const users = await this.getContributors(namespace);
+                const users = await this.getContributors(namespace as unknown as string);
                 res.json(users);
             } catch (err) {
                 surfaceProfileControllerErrors({

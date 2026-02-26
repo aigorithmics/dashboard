@@ -76,7 +76,7 @@ async function main() {
       code: 404,
     })
   );
-  app.get('/*', (_: express.Request, res: express.Response) => {
+  app.get('{/*path}', (_: express.Request, res: express.Response) => {
     res.sendFile(resolve(frontEnd, 'index.html'));
   });
   app.listen(

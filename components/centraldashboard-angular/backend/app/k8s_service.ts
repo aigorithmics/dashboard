@@ -22,7 +22,7 @@ export interface PlatformInfo {
 /** Wrap Kubernetes API calls in a simpler interface for use in routes. */
 export class KubernetesService {
   private namespace = 'kubeflow';
-  private coreAPI: k8s.Core_v1Api;
+  private coreAPI: k8s.CoreV1Api;
   private dashboardConfigMap = DASHBOARD_CONFIGMAP;
 
   constructor(private kubeConfig: k8s.KubeConfig) {
@@ -33,14 +33,14 @@ export class KubernetesService {
     if (context && context.namespace) {
       this.namespace = context.namespace;
     }
-    this.coreAPI = this.kubeConfig.makeApiClient(k8s.Core_v1Api);
+    this.coreAPI = this.kubeConfig.makeApiClient(k8s.CoreV1Api);
   }
 
   /** Retrieves the list of namespaces from the Cluster. */
   async getNamespaces(): Promise<k8s.V1Namespace[]> {
     try {
-      const {body} = await this.coreAPI.listNamespace();
-      return body.items;
+      const ns = await this.coreAPI.listNamespace();
+      return ns.items;
     } catch (err) {
       console.error('Unable to fetch Namespaces:', err.body || err);
       return [];
@@ -50,8 +50,8 @@ export class KubernetesService {
   /** Retrieves the configmap data for the central dashboard. */
   async getConfigMap(): Promise<k8s.V1ConfigMap> {
     try {
-      const { body } = await this.coreAPI.readNamespacedConfigMap(this.dashboardConfigMap,this.namespace);
-      return body;
+      const ns = await this.coreAPI.readNamespacedConfigMap({name: this.dashboardConfigMap, namespace: this.namespace});
+      return ns;
     } catch (err) {
       console.error('Unable to fetch ConfigMap:', err.body || err);
       return null;
@@ -59,9 +59,9 @@ export class KubernetesService {
   }
 
   /** Retrieves the list of events for the given Namespace from the Cluster. */
-  async getEventsForNamespace(namespace: string): Promise<k8s.V1Event[]> {
+  async getEventsForNamespace(namespace: string): Promise<k8s.CoreV1Event[]> {
     try {
-      const {body} = await this.coreAPI.listNamespacedEvent(namespace);
+      const body = await this.coreAPI.listNamespacedEvent({namespace});
       return body.items;
     } catch (err) {
       console.error(
@@ -96,7 +96,7 @@ export class KubernetesService {
    */
   async getNodes(): Promise<k8s.V1Node[]> {
     try {
-      const {body} = await this.coreAPI.listNode();
+      const body = await this.coreAPI.listNode();
       return body.items;
     } catch (err) {
       console.error('Unable to fetch Nodes', err.body || err);

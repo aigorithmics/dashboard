@@ -10,7 +10,6 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest from 'request';
 import http from 'http';
 
 let defaultBasePath = 'http://localhost/kfam';
@@ -395,14 +394,14 @@ export interface Authentication {
     /**
     * Apply authentication settings to header and query params.
     */
-    applyToRequest(requestOptions: localVarRequest.Options): void;
+    applyToRequest(requestOptions: any): void;
 }
 
 export class HttpBasicAuth implements Authentication {
     public username: string = '';
     public password: string = '';
 
-    applyToRequest(requestOptions: localVarRequest.Options): void {
+    applyToRequest(requestOptions: any): void {
         requestOptions.auth = {
             username: this.username, password: this.password
         }
@@ -415,7 +414,7 @@ export class ApiKeyAuth implements Authentication {
     constructor(private location: string, private paramName: string) {
     }
 
-    applyToRequest(requestOptions: localVarRequest.Options): void {
+    applyToRequest(requestOptions: any): void {
         if (this.location == "query") {
             (<any>requestOptions.qs)[this.paramName] = this.apiKey;
         } else if (this.location == "header" && requestOptions && requestOptions.headers) {
@@ -427,9 +426,19 @@ export class ApiKeyAuth implements Authentication {
 export class OAuth implements Authentication {
     public accessToken: string = '';
 
-    applyToRequest(requestOptions: localVarRequest.Options): void {
-        if (requestOptions && requestOptions.headers) {
-            requestOptions.headers["Authorization"] = "Bearer " + this.accessToken;
+    public applyToRequest(requestOptions: any): void {
+        if (!requestOptions) return;
+
+        if (!requestOptions.headers) {
+            requestOptions.headers = {};
+        }
+
+        const authHeader = "Bearer " + this.accessToken;
+
+        if (typeof (requestOptions.headers as any).set === 'function') {
+            (requestOptions.headers as any).set("Authorization", authHeader);
+        } else {
+            requestOptions.headers["Authorization"] = authHeader;
         }
     }
 }
@@ -438,7 +447,7 @@ export class VoidAuth implements Authentication {
     public username: string = '';
     public password: string = '';
 
-    applyToRequest(_: localVarRequest.Options): void {
+    applyToRequest(requestOptions: any): void {
         // Do nothing
     }
 }
@@ -493,53 +502,49 @@ export class DefaultApi {
      * @param body Binding spec
      * @param {*} [options] Override http request options.
      */
-    public createBinding (body: Binding, options: any = {}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async createBinding(body: Binding, options: any = {}): Promise<any> {
         const localVarPath = this.basePath + '/v1/bindings';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-
+        let localVarHeaderParams: any = Object.assign({}, this.defaultHeaders);
+        
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createBinding.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
+        const urlObj = new URL(localVarPath);
+        Object.keys(localVarQueryParameters).forEach(key => 
+            urlObj.searchParams.append(key, localVarQueryParameters[key])
+        );
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        let requestOptions: RequestInit = {
             method: 'POST',
-            qs: localVarQueryParameters,
             headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(body, "Binding")
+            body: JSON.stringify(ObjectSerializer.serialize(body, "Binding"))
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (this.authentications.default) {
+            await this.authentications.default.applyToRequest(requestOptions as any);
         }
-        return new Promise<{ response: http.IncomingMessage; body?: any;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+
+        const response = await fetch(urlObj.toString(), requestOptions);
+
+        if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            }
+            return await response.text();
+        } else {
+            const errorBody = await response.text();
+            throw {
+                response: response,
+                body: errorBody,
+                statusCode: response.status
+            };
+        }
     }
     /**
      * 
@@ -547,53 +552,54 @@ export class DefaultApi {
      * @param body Profile spec
      * @param {*} [options] Override http request options.
      */
-    public createProfile (body: Profile, options: any = {}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async createProfile(body: Profile, options: any = {}): Promise<any> {
         const localVarPath = this.basePath + '/v1/profiles';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-
+        let localVarHeaderParams: any = Object.assign({}, this.defaultHeaders);
+        
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createProfile.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
+        const url = new URL(localVarPath);
+        Object.keys(localVarQueryParameters).forEach(key => 
+            url.searchParams.append(key, localVarQueryParameters[key])
+        );
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        const requestOptions: RequestInit = {
             method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(body, "Profile")
+            headers: {
+                ...localVarHeaderParams,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ObjectSerializer.serialize(body, "Profile"))
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (this.authentications.default) {
+            await this.authentications.default.applyToRequest(requestOptions);
         }
-        return new Promise<{ response: http.IncomingMessage; body?: any;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+
+        const response = await fetch(url.toString(), requestOptions);
+
+        if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            }
+            return await response.text();
+        } else {
+            const errorBody = await response.text().catch(() => "Unknown error");
+            throw {
+                name: "HTTPError",
+                message: `Request failed with status code ${response.status}`,
+                response: response,
+                body: errorBody,
+                statusCode: response.status
+            };
+        }
     }
     /**
      * Only admin or referred namespace owner can delete binding
@@ -601,53 +607,54 @@ export class DefaultApi {
      * @param body Binding spec
      * @param {*} [options] Override http request options.
      */
-    public deleteBinding (body: Binding, options: any = {}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async deleteBinding(body: Binding, options: any = {}): Promise<any> {
         const localVarPath = this.basePath + '/v1/bindings';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-
+        let localVarHeaderParams: any = Object.assign({}, this.defaultHeaders);
+        
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling deleteBinding.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
+        const url = new URL(localVarPath);
+        Object.keys(localVarQueryParameters).forEach(key => 
+            url.searchParams.append(key, localVarQueryParameters[key])
+        );
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        const requestOptions: RequestInit = {
             method: 'DELETE',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(body, "Binding")
+            headers: {
+                ...localVarHeaderParams,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ObjectSerializer.serialize(body, "Binding"))
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (this.authentications.default) {
+            await this.authentications.default.applyToRequest(requestOptions);
         }
-        return new Promise<{ response: http.IncomingMessage; body?: any;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+
+        const response = await fetch(url.toString(), requestOptions);
+
+        if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            }
+            return await response.text();
+        } else {
+            const errorBody = await response.text().catch(() => "Unknown error");
+            throw {
+                name: "HTTPError",
+                message: `Delete request failed: ${response.status}`,
+                response: response,
+                body: errorBody,
+                statusCode: response.status
+            };
+        }
     }
     /**
      * Only admin or profile owner can delete profile
@@ -655,53 +662,46 @@ export class DefaultApi {
      * @param profile Profile name
      * @param {*} [options] Override http request options.
      */
-    public deleteProfile (profile: string, options: any = {}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async deleteProfile(profile: string, options: any = {}): Promise<any> {
         const localVarPath = this.basePath + '/v1/profiles/{profile}'
             .replace('{' + 'profile' + '}', encodeURIComponent(String(profile)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        
+        let localVarHeaderParams: any = Object.assign({}, this.defaultHeaders);
 
         // verify required parameter 'profile' is not null or undefined
         if (profile === null || profile === undefined) {
             throw new Error('Required parameter profile was null or undefined when calling deleteProfile.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        const requestOptions: RequestInit = {
             method: 'DELETE',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: localVarHeaderParams
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (this.authentications.default) {
+            await this.authentications.default.applyToRequest(requestOptions);
         }
-        return new Promise<{ response: http.IncomingMessage; body?: any;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+
+        const response = await fetch(localVarPath, requestOptions);
+
+        if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            }
+            return await response.text();
+        } else {
+            const errorBody = await response.text().catch(() => "Unknown error");
+            throw {
+                name: "HTTPError",
+                message: `Failed to delete profile ${profile}: ${response.status}`,
+                response: response,
+                body: errorBody,
+                statusCode: response.status
+            };
+        }
     }
     /**
      * Bindings will contain its current status
@@ -711,60 +711,54 @@ export class DefaultApi {
      * @param role Owner or editor or viewer, when not empty, only return bindings of this role
      * @param {*} [options] Override http request options.
      */
-    public readBindings (user?: string, namespace?: string, role?: string, options: any = {}) : Promise<{ response: http.IncomingMessage; body: BindingEntries;  }> {
+    public async readBindings(user?: string, namespace?: string, role?: string, options: any = {}): Promise<BindingEntries> {
         const localVarPath = this.basePath + '/v1/bindings';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams: any = Object.assign({}, this.defaultHeaders);
 
         if (user !== undefined) {
             localVarQueryParameters['user'] = ObjectSerializer.serialize(user, "string");
         }
-
         if (namespace !== undefined) {
             localVarQueryParameters['namespace'] = ObjectSerializer.serialize(namespace, "string");
         }
-
         if (role !== undefined) {
             localVarQueryParameters['role'] = ObjectSerializer.serialize(role, "string");
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
+        const url = new URL(localVarPath);
+        Object.keys(localVarQueryParameters).forEach(key => {
+            if (localVarQueryParameters[key] !== undefined) {
+                url.searchParams.append(key, String(localVarQueryParameters[key]));
+            }
+        });
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        const requestOptions: RequestInit = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: localVarHeaderParams
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (this.authentications.default) {
+            await this.authentications.default.applyToRequest(requestOptions);
         }
-        return new Promise<{ response: http.IncomingMessage; body: BindingEntries;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    body = ObjectSerializer.deserialize(body, "BindingEntries");
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+
+        const response = await fetch(url.toString(), requestOptions);
+
+        if (response.ok) {
+            const rawBody = await response.json();
+            return ObjectSerializer.deserialize(rawBody, "BindingEntries");
+        } else {
+            const errorBody = await response.text().catch(() => "Unknown error");
+            throw {
+                name: "HTTPError",
+                message: `Failed to read bindings: ${response.status}`,
+                response: response,
+                body: errorBody,
+                statusCode: response.status
+            };
+        }
     }
     /**
      * 
@@ -772,56 +766,48 @@ export class DefaultApi {
      * @param user username / email
      * @param {*} [options] Override http request options.
      */
-    public v1RoleClusteradminGet (user: string, options: any = {}) : Promise<{ response: http.IncomingMessage; body: boolean;  }> {
+    public async v1RoleClusteradminGet(user: string, options: any = {}): Promise<boolean> {
         const localVarPath = this.basePath + '/v1/role/clusteradmin';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams: any = Object.assign({}, this.defaultHeaders);
 
         // verify required parameter 'user' is not null or undefined
         if (user === null || user === undefined) {
             throw new Error('Required parameter user was null or undefined when calling v1RoleClusteradminGet.');
         }
 
-        if (user !== undefined) {
-            localVarQueryParameters['user'] = ObjectSerializer.serialize(user, "string");
-        }
+        localVarQueryParameters['user'] = ObjectSerializer.serialize(user, "string");
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
+        const url = new URL(localVarPath);
+        Object.keys(localVarQueryParameters).forEach(key => {
+            url.searchParams.append(key, String(localVarQueryParameters[key]));
+        });
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        const requestOptions: RequestInit = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
+            headers: localVarHeaderParams
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (this.authentications.default) {
+            await this.authentications.default.applyToRequest(requestOptions);
         }
-        return new Promise<{ response: http.IncomingMessage; body: boolean;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    body = ObjectSerializer.deserialize(body, "boolean");
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+
+        const response = await fetch(url.toString(), requestOptions);
+
+        if (response.ok) {
+            const rawBody = await response.json();
+            return ObjectSerializer.deserialize(rawBody, "boolean");
+        } else {
+            const errorBody = await response.text().catch(() => "Unknown error");
+            throw {
+                name: "HTTPError",
+                message: `Failed to check cluster admin role: ${response.status}`,
+                response: response,
+                body: errorBody,
+                statusCode: response.status
+            };
+        }
     }
 }
