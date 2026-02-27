@@ -8,6 +8,8 @@ import { EnvInfo } from '../types/env-info';
   providedIn: 'root',
 })
 export class CDBBackendService {
+  public logoutUrl: string;
+
   constructor(@Inject(HttpClient) private http: HttpClient) {}
 
   public getEnvInfo(): Observable<EnvInfo> {
@@ -21,4 +23,8 @@ export class CDBBackendService {
 
     return this.http.get<DashboardLinks>(url);
   }
+
+  public setLogoutLink(link: string): void {
+    this.logoutUrl = link;
+  } 
 }

@@ -1,5 +1,7 @@
-import { Component, input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import { Subscription } from 'rxjs';
+import { CDBBackendService } from 'src/app/services/backend.service';
 import { CDBNamespaceService } from 'src/app/services/namespace.service';
 import { Namespace } from 'src/app/types/namespace';
 
@@ -10,10 +12,10 @@ import { Namespace } from 'src/app/types/namespace';
     encapsulation: ViewEncapsulation.None,
     standalone: false
 })
-export class NamespaceSelectorComponent implements OnInit {
+export class NamespaceSelectorComponent implements OnInit, OnDestroy {
   readonly NO_NAMESPACES = 'No namespaces';
 
-  public logoutUrl = input.required<string>();
+  public logoutUrl = signal<string>('');
 
   public namespaces: Namespace[];
   public ALL_NAMESPACES = this.ns.ALL_NAMESPACES;
@@ -24,16 +26,26 @@ export class NamespaceSelectorComponent implements OnInit {
     return this.namespaces?.length > 1;
   }
 
-  constructor(private ns: CDBNamespaceService) {}
+  public sub = new Subscription();
+
+  constructor(
+    @Inject(CDBNamespaceService) private ns: CDBNamespaceService, 
+    @Inject(CDBBackendService) private backendService: CDBBackendService) {}
 
   ngOnInit(): void {
-    this.ns.namespaces.subscribe((namespaces: Namespace[]) => {
+    this.sub.add(this.ns.namespaces.subscribe((namespaces: Namespace[]) => {
       this.namespaces = namespaces;
-    });
+    }));
 
-    this.ns.currentNamespace.subscribe((namespace: Namespace) => {
+    this.sub.add(this.ns.currentNamespace.subscribe((namespace: Namespace) => {
       this.selectedNamespace = namespace;
-    });
+    }));
+
+    this.logoutUrl.set(this.backendService.logoutUrl);
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   onSelectNamespace(selected: MatSelectChange) {

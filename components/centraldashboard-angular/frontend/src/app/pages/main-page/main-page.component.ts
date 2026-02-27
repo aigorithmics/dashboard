@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit, signal } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DashboardLinks, Link, MenuLink } from 'src/app/types/dashboard-links';
@@ -14,6 +14,7 @@ import { EnvironmentService } from 'src/app/services/environment.service';
 import { PlatformInfo } from 'src/app/types/platform-info';
 import { CDBNamespaceService } from 'src/app/services/namespace.service';
 import { Namespace } from 'src/app/types/namespace';
+import { CDBBackendService } from 'src/app/services/backend.service';
 
 @Component({
     selector: 'app-main-page',
@@ -21,7 +22,7 @@ import { Namespace } from 'src/app/types/namespace';
     styleUrls: ['./main-page.component.scss'],
     standalone: false
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent implements OnInit, OnDestroy {
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
@@ -29,7 +30,6 @@ export class MainPageComponent implements OnInit {
       shareReplay(),
     );
 
-  public logoutUrl = signal<string>('logout'); 
 
   public buildLabel: string = 'Build';
   public buildVersion: string = environment.buildVersion;
@@ -46,26 +46,28 @@ export class MainPageComponent implements OnInit {
   public documentationItems: Link[];
   public currentNamespace: string;
   public isIframed = false;
+  private sub = new Subscription();
 
   constructor(
     @Inject(BreakpointObserver) private breakpointObserver: BreakpointObserver,
     @Inject(Router) private router: Router,
-    private env: EnvironmentService,
-    private ns: CDBNamespaceService,
+    @Inject(EnvironmentService) private env: EnvironmentService,
+    @Inject(CDBNamespaceService) private ns: CDBNamespaceService,
+    @Inject(CDBBackendService) private backendService: CDBBackendService,
   ) {}
 
   ngOnInit() {
-    this.env.platform.subscribe((platform: PlatformInfo) => {
+    this.sub.add(this.env.platform.subscribe((platform: PlatformInfo) => {
       this.storeBuildInfo(platform);
-    });
+    }));
 
-    this.env.dashboardLinks.subscribe((links: DashboardLinks) => {
+    this.sub.add(this.env.dashboardLinks.subscribe((links: DashboardLinks) => {
       this.storeDashboardLinks(links);
-    });
+    }));
 
-    this.ns.currentNamespace.subscribe((namespace: Namespace) => {
+    this.sub.add(this.ns.currentNamespace.subscribe((namespace: Namespace) => {
       this.currentNamespace = namespace.namespace;
-    });
+    }));
 
     /**
      * Handles case when an iframed page requests an invalid route
@@ -75,6 +77,10 @@ export class MainPageComponent implements OnInit {
     if (window.location !== window.parent.location) {
       this.isIframed = true;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   storeBuildInfo(platform: PlatformInfo) {
@@ -91,7 +97,7 @@ export class MainPageComponent implements OnInit {
       this.buildId = platform.buildId;
     }
     if (platform.logoutUrl) {
-      this.logoutUrl.set(platform.logoutUrl);
+      this.backendService.setLogoutLink(platform.logoutUrl);
     }
   }
 

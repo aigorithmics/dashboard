@@ -20,6 +20,9 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "security": {
+                "autoCsp": true
+              },
             "preserveSymlinks": true,
             "outputPath": {
               "base": "dist/frontend"
@@ -78,13 +81,19 @@
                 "styles": true,
                 "hidden": false,
                 "vendor": true
+              },
+              "security": {
+                "autoCsp": true
               }
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "security": {
+                "autoCsp": true
+              }
             }
           },
           "defaultConfiguration": "production"

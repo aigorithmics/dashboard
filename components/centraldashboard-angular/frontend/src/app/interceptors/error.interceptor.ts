@@ -1,19 +1,31 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
   HttpErrorResponse,
+  HttpHandlerFn,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { CDBBackendService } from '../services/backend.service';
 // import { SnackBarConfig, SnackBarService, SnackType } from 'kubeflow';
 //todo - to fix after kubernetes client library is upgraded
 
+export function HeadersInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+  const authReq = request.clone({
+    headers: request.headers.set('Content-Type', 'application/json')
+        .set('Strict-Transport-Security', '31536000')
+  })
+    return next(authReq);
+}
+
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  ///constructor(private snackBar: SnackBarService) {}
+  private router = inject(Router);
+  private backendService = inject(CDBBackendService);
   constructor() {}
 
   intercept(
@@ -26,21 +38,15 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   public handleError(
-    error: HttpErrorResponse | ErrorEvent | string,
+    error: HttpErrorResponse,
     showSnackBar = true,
   ): Observable<never> {
     // The backend returned an unsuccessful response code.
     // The response body may contain clues as to what went wrong,
     console.error(error);
-    // if (showSnackBar) {
-    //   const config: SnackBarConfig = {
-    //     data: {
-    //       msg: this.getSnackErrorMessage(error),
-    //       snackType: SnackType.Error,
-    //     },
-    //   };
-    //   this.snackBar.open(config);
-    // }
+    if (error.status) {
+      this.router.navigateByUrl(this.backendService.logoutUrl)
+    }
 
     return throwError(this.getErrorMessage(error));
   }
