@@ -98,7 +98,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
       this.buildId = platform.buildId;
     }
     if (platform.logoutUrl) {
-      this.backendService.setLogoutLink(platform.logoutUrl);
+      this.backendService.setLogoutUrl(platform.logoutUrl);
     }
   }
 

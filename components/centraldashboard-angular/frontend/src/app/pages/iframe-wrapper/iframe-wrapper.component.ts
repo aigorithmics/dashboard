@@ -104,7 +104,7 @@ export class IframeWrapperComponent implements AfterViewInit, OnDestroy {
       if (iframeWindow) {
 
       iframeWindow.onerror = (error: string | Event) => {
-        this.router.navigateByUrl(this.backendService.logoutUrl);
+        this.router.navigateByUrl(this.backendService.logoutUrl());
         return false;
       }
     }

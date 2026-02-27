@@ -41,7 +41,7 @@ export class NamespaceSelectorComponent implements OnInit, OnDestroy {
       this.selectedNamespace = namespace;
     }));
 
-    this.logoutUrl.set(this.backendService.logoutUrl);
+    this.logoutUrl.set(this.backendService.logoutUrl());
   }
 
   ngOnDestroy(): void {

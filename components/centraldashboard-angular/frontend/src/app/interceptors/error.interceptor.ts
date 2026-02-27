@@ -45,7 +45,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     // The response body may contain clues as to what went wrong,
     console.error(error);
     if (error.status) {
-      this.router.navigateByUrl(this.backendService.logoutUrl)
+      this.router.navigateByUrl(this.backendService.logoutUrl())
     }
 
     return throwError(this.getErrorMessage(error));

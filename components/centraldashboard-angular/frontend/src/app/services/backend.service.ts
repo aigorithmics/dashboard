@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardLinks } from '../types/dashboard-links';
 import { EnvInfo } from '../types/env-info';
@@ -8,7 +8,7 @@ import { EnvInfo } from '../types/env-info';
   providedIn: 'root',
 })
 export class CDBBackendService {
-  public logoutUrl: string;
+  public logoutUrl = signal<string>('/logout');
 
   constructor(@Inject(HttpClient) private http: HttpClient) {}
 
@@ -24,7 +24,7 @@ export class CDBBackendService {
     return this.http.get<DashboardLinks>(url);
   }
 
-  public setLogoutLink(link: string): void {
-    this.logoutUrl = link;
+  public setLogoutUrl(link: string): void {
+    this.logoutUrl.set(link);
   } 
 }
