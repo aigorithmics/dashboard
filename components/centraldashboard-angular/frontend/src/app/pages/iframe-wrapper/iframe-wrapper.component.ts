@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Inject,
+  inject,
   OnDestroy,
   ViewChild,
 } from '@angular/core';
@@ -22,6 +22,7 @@ import {
   APP_CONNECTED_EVENT,
   MESSAGE,
 } from '../../../../public/library';
+import { CDBBackendService } from 'src/app/services/backend.service';
 
 @Component({
     selector: 'app-iframe-wrapper',
@@ -69,10 +70,15 @@ export class IframeWrapperComponent implements AfterViewInit, OnDestroy {
   public iframeLocation: string | undefined = 'about:blank';
   public currentNamespace: string;
   public namespaces: Namespace[];
+  
+  public ns = inject(CDBNamespaceService);
+  public router = inject(Router); 
+  public backendService = inject(CDBBackendService);
+
   private urlSub: Subscription;
   private interval: any;
 
-  constructor(@Inject(Router) private router: Router, private ns: CDBNamespaceService) {
+  constructor() {
     /**
      * On router events, we want to ensure that:
      *  - the iframe's src won't be updated when the URLs of the
@@ -95,6 +101,13 @@ export class IframeWrapperComponent implements AfterViewInit, OnDestroy {
       if (!equalUrlPaths(eventUrl, iframeUrl)) {
         this.srcPath = event.url;
       }
+      if (iframeWindow) {
+
+      iframeWindow.onerror = (error: string | Event) => {
+        this.router.navigateByUrl(this.backendService.logoutUrl);
+        return false;
+      }
+    }
     });
   }
 

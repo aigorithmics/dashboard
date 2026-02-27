@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 import { CDBBackendService } from 'src/app/services/backend.service';
@@ -18,7 +18,6 @@ export class NamespaceSelectorComponent implements OnInit, OnDestroy {
   public logoutUrl = signal<string>('');
 
   public namespaces: Namespace[];
-  public ALL_NAMESPACES = this.ns.ALL_NAMESPACES;
   public selectedNamespace: Namespace = { namespace: this.NO_NAMESPACES };
 
   public get namespacesAvailable(): boolean {
@@ -27,10 +26,11 @@ export class NamespaceSelectorComponent implements OnInit, OnDestroy {
   }
 
   public sub = new Subscription();
+  private backendService = inject(CDBBackendService);
+  private ns = inject(CDBNamespaceService);
+  public ALL_NAMESPACES = this.ns.ALL_NAMESPACES;
 
-  constructor(
-    @Inject(CDBNamespaceService) private ns: CDBNamespaceService, 
-    @Inject(CDBBackendService) private backendService: CDBBackendService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.sub.add(this.ns.namespaces.subscribe((namespaces: Namespace[]) => {

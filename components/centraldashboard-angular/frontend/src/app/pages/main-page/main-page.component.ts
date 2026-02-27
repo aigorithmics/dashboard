@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable, Subscription } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -46,6 +46,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
   public documentationItems: Link[];
   public currentNamespace: string;
   public isIframed = false;
+
+  private backendService = inject(CDBBackendService);
   private sub = new Subscription();
 
   constructor(
@@ -53,7 +55,6 @@ export class MainPageComponent implements OnInit, OnDestroy {
     @Inject(Router) private router: Router,
     @Inject(EnvironmentService) private env: EnvironmentService,
     @Inject(CDBNamespaceService) private ns: CDBNamespaceService,
-    @Inject(CDBBackendService) private backendService: CDBBackendService,
   ) {}
 
   ngOnInit() {
